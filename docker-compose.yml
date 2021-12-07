@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  game_server_build:
+    image: game_server
+    build: 
+      context: .
+      dockerfile: game_server/Dockerfile
+  docker_manager:
+    image: docker_manager
+    build: 
+      context: .
+      dockerfile: docker_manager/Dockerfile
+    networks:
+      - backend
+  mongodb:
+    image: mongo
+    # ports:
+    #   - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: scooby
+    networks:
+      - backend
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "8000:80"
+    networks:
+      - frontend
+  server:
+    image: server
+    build:  
+      context: .
+      dockerfile: server/Dockerfile
+    depends_on:
+      - nginx
+      - mongodb
+      - docker_manager
+    networks:
+      - backend
+      - frontend
+networks:
+  frontend: null
+  backend: null
