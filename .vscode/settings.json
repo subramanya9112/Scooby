@@ -1,0 +1,13 @@
+{
+    "files.exclude": {
+        "Design": true,
+        "docker_manager": true,
+        "nginx": true,
+        "server": true,
+        ".gitattributes": true,
+        "docker-compose.yml": true,
+        "package-lock.json": true,
+        "package.json": true,
+        "scooby-app.yml": true,
+    }
+}

@@ -3,16 +3,21 @@ version: "3.9"
 services:
   game_server_build:
     image: game_server
-    build: 
+    command: [ "echo", "built image" ]
+    build:
       context: .
       dockerfile: game_server/Dockerfile
+    networks:
+      - frontend
   docker_manager:
     image: docker_manager
-    build: 
+    build:
       context: .
       dockerfile: docker_manager/Dockerfile
     networks:
       - backend
+    depends_on:
+      - game_server_build
   mongodb:
     image: mongo
     # ports:
@@ -23,17 +28,19 @@ services:
       MONGO_INITDB_DATABASE: scooby
     networks:
       - backend
+    volumes:
+      - mongodb:/data/db
   nginx:
     image: nginx
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     ports:
-      - "8000:80"
+      - "80:80"
     networks:
       - frontend
   server:
     image: server
-    build:  
+    build:
       context: .
       dockerfile: server/Dockerfile
     depends_on:
@@ -46,3 +53,5 @@ services:
 networks:
   frontend: null
   backend: null
+volumes:
+  mongodb: null

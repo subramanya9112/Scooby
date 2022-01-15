@@ -9,7 +9,9 @@
     "docker-run-rebuild": "docker-compose up --build",
     "docker-run-detached": "docker-compose up -d",
     "docker-run-rebuild-detached": "docker-compose up --build -d",
-    "docker-stop": "docker-compose down"
+    "docker-stop": "docker-compose down",
+    "swarm-run": "docker stack deploy --compose-file docker-compose.yml scooby",
+    "swarm-stop": "docker stack rm scooby"
   },
   "repository": {
     "type": "git",
