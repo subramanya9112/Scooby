@@ -5,6 +5,8 @@ const port = process.env.PORT || 80;
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import PlayerModel from './models/PlayerModel';
+import Level from './room_generator/class/Level';
+import Tiles from './room_generator/class/Tiles';
 
 const server = createServer(app);
 const io = new Server(server);
@@ -12,6 +14,9 @@ const io = new Server(server);
 app.use(express.json());
 
 let players: { [id: string]: PlayerModel; } = {};
+
+let levelData = Level.GetLevel(1);
+let level = Tiles.GetLevel(levelData);
 
 io.on('connection', (socket) => {
     console.log('a user connected');
@@ -44,6 +49,17 @@ io.on('connection', (socket) => {
 
             socket.broadcast.emit('playerMovement', players[socket.id]);
         }
+    });
+
+    socket.on('getMap', () => {
+        socket.emit('gotMap', level);
+    });
+
+    socket.on('levelComplete', () => {
+        levelData = Level.GetLevel(1);
+        level = Tiles.GetLevel(levelData);
+        socket.emit("levelCompleted");
+        socket.broadcast.emit("levelCompleted");
     });
 });
 

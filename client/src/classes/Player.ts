@@ -8,6 +8,7 @@ export default class Player extends Phaser.Physics.Arcade.Image {
     keyS: Phaser.Input.Keyboard.Key | undefined;
     keyD: Phaser.Input.Keyboard.Key | undefined;
     keyW: Phaser.Input.Keyboard.Key | undefined;
+    public oldPosition: { x: number; y: number; } = { x: 0, y: 0 };
 
     constructor(
         scene: Phaser.Scene,
@@ -28,6 +29,7 @@ export default class Player extends Phaser.Physics.Arcade.Image {
             this.keyS = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
             this.keyD = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
             this.keyW = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+            this.scene.cameras.main.startFollow(this, true, 0.03, 0.03, 0, 0);
         }
 
         // enable physics
@@ -42,7 +44,7 @@ export default class Player extends Phaser.Physics.Arcade.Image {
 
     update() {
         if (this.mainPlayer && this.cursors) {
-            let speed = 1000;
+            let speed = 500;
 
             if (this.cursors.left.isDown || this.keyA?.isDown) {
                 this.setVelocityX(-speed);

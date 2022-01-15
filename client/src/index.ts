@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
+import GameConst from './constants/game';
+import Listeners from './listners/listener';
 import scenes from './scenes';
-import io from 'socket.io-client';
 import BootScene from './scenes/BootScene';
 
 const config: Phaser.Types.Core.GameConfig = {
@@ -27,17 +28,12 @@ const config: Phaser.Types.Core.GameConfig = {
 };
 
 class Game extends Phaser.Game {
-    public static CHANGE_SCENE = 'changeScene';
-
-
     globals: any;
     constructor() {
         super(config);
-        const socket = io("http://localhost", { transports: ['websocket', 'polling', 'flashsocket'] });
-        this.globals = { socket }
+        Listeners.setInstance('http://localhost', this);
         this.scene.start(BootScene.sceneName);
-
-        this.events.on(Game.CHANGE_SCENE, (sceneName: string) => {
+        this.events.on(GameConst.CHANGE_SCENE, (sceneName: string) => {
             this.scene.start(sceneName);
         });
     }

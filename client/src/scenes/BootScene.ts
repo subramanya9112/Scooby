@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import Game from '../constants/game';
+import GameConst from '../constants/game';
 import GameScene from './GameScene';
 
 export default class BootScene extends Phaser.Scene {
@@ -18,6 +18,6 @@ export default class BootScene extends Phaser.Scene {
     }
 
     create() {
-        this.game.events.emit(Game.CHANGE_SCENE, GameScene.sceneName);
+        this.game.events.emit(GameConst.CHANGE_SCENE, GameScene.sceneName);
     }
 }
