@@ -63,7 +63,7 @@ io.on('connection', (socket) => {
     });
 });
 
-app.post('/status', async (req: Request, res: Response) => {
+app.get('/status', async (req: Request, res: Response) => {
     res.send("Server is running");
 });
 
