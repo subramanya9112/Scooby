@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import Player from '../classes/Player';
+import Bullet from '../classes/Bullet';
 
 export default class GameScene extends Phaser.Scene {
     public static sceneName = 'GameScene';
@@ -7,6 +8,8 @@ export default class GameScene extends Phaser.Scene {
     walls: Phaser.Physics.Arcade.StaticGroup | undefined;
     otherPlayers: Phaser.Physics.Arcade.Group | undefined;
     roomCollider: Phaser.Physics.Arcade.StaticGroup | undefined;
+    playerBullets: Phaser.Physics.Arcade.Group | undefined;
+    otherPlayerBullets: Phaser.Physics.Arcade.Group | undefined;
 
     constructor() {
         super(GameScene.sceneName);
@@ -115,6 +118,34 @@ export default class GameScene extends Phaser.Scene {
         this.physics.add.collider(this.player, this.walls);
         this.physics.add.collider(this.player, this.otherPlayers);
         this.game.events.emit('getMap');
+
+        this.otherPlayerBullets = this.physics.add.group();
+
+        this.playerBullets = this.physics.add.group();
+        this.input.on('pointerdown', (pointer: PointerEvent) => {
+            if (this.player && this.playerBullets) {
+                let angleX = Phaser.Math.Angle.BetweenPoints({
+                    x: this.player.x,
+                    y: this.player.y,
+                }, {
+                    x: this.cameras.main.scrollX + pointer.x,
+                    y: this.cameras.main.scrollY + pointer.y,
+                });
+                let bullet = new Bullet(
+                    this,
+                    this.player.x,
+                    this.player.y,
+                    'player',
+                    undefined,
+                );
+                this.playerBullets.add(bullet);
+                bullet.init(angleX);
+            }
+        });
+
+        this.physics.add.collider(this.walls, this.playerBullets, (wall, bullet) => {
+            bullet.destroy();
+        });
     }
 
     sent: boolean = false;

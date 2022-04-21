@@ -20,8 +20,8 @@ services:
       - game_server_build
   mongodb:
     image: mongo
-    # ports:
-    #   - "27017:27017"
+    ports:
+      - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
@@ -34,6 +34,8 @@ services:
     image: nginx
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/access.log:/etc/nginx/access.log
+      - ./nginx/error.log:/etc/nginx/error.log
     ports:
       - "80:80"
     networks:
