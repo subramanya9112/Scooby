@@ -1,0 +1,35 @@
+26 march
+database design
+schema creation
+
+2 april
+datbase code
+
+9 april
+nginx proxy creation
+
+16 april
+attacks
+
+
+attacks
+enemies
+enemy attacks
+boss
+boss attacks
+rooms
+items
+effects
+inventory
+menu
+ad page, register, login
+(pause)
+
+game server room creation
+dockerization and optimization
+
+graphics
+different control schemes
+
+upload to cloud
+measure performance
