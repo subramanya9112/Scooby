@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "parcel src/index.html -p 8000",
-    "build": "parcel build src/index.html --out-dir dist --no-minify",
+    "start": "parcel src/*.html -p 8000",
+    "build": "parcel build src/*.html --out-dir dist --no-minify",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

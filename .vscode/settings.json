@@ -3,7 +3,7 @@
         "Design": true,
         "docker_manager": true,
         "nginx": true,
-        "server": true,
+        // "server": true,
         ".gitattributes": true,
         // "docker-compose.yml": true,
         // "package-lock.json": true,
