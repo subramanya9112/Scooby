@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import Player from '../classes/Player';
 import Bullet from '../classes/Bullet';
+import Listeners from '../listners/listener';
 
 export default class GameScene extends Phaser.Scene {
     public static sceneName = 'GameScene';
@@ -97,6 +98,40 @@ export default class GameScene extends Phaser.Scene {
             });
         });
 
+        this.game.events?.on('otherPlayerBulletShot', (data: any) => {
+            if (this.otherPlayerBullets) {
+                let bullet = this.otherPlayerBullets.getFirstDead();
+                if (bullet) {
+                    bullet.activate(
+                        data.x,
+                        data.y,
+                    );
+                    bullet.id = data.id;
+                } else {
+                    bullet = new Bullet(
+                        data.id,
+                        this,
+                        data.x,
+                        data.y,
+                        'shot',
+                        undefined,
+                    );
+                }
+                this.otherPlayerBullets.add(bullet);
+                bullet.init(data.rotation);
+            }
+        });
+
+        this.game.events?.on('otherPlayerBulletRemove', (data: any) => {
+            let id = data.id;
+            this.otherPlayerBullets?.getChildren().forEach((val) => {
+                let otherPlayer = val as Bullet;
+                if (otherPlayer.id === id) {
+                    otherPlayer.deactivate();
+                }
+            });
+        });
+
         this.game.events?.on('gotMap', (data: any) => {
             this.createMapData(data);
         });
@@ -123,29 +158,52 @@ export default class GameScene extends Phaser.Scene {
 
         this.playerBullets = this.physics.add.group();
         this.input.on('pointerdown', (pointer: PointerEvent) => {
-            if (this.player && this.playerBullets) {
-                let angleX = Phaser.Math.Angle.BetweenPoints({
-                    x: this.player.x,
-                    y: this.player.y,
-                }, {
-                    x: this.cameras.main.scrollX + pointer.x,
-                    y: this.cameras.main.scrollY + pointer.y,
-                });
-                let bullet = new Bullet(
+            if (pointer.button == 0)
+                this.shoot(pointer.x, pointer.y);
+        });
+        this.physics.add.collider(this.walls, this.playerBullets, (wall, bullet) => {
+            this.game.events.emit('bulletRemove', {
+                id: (bullet as Bullet).id
+            });
+            (bullet as Bullet).deactivate();
+        });
+    }
+
+    shoot(x: number, y: number) {
+        if (this.player && this.playerBullets) {
+            let rotation = Phaser.Math.Angle.BetweenPoints({
+                x: this.player.x,
+                y: this.player.y,
+            }, {
+                x: this.cameras.main.scrollX + x,
+                y: this.cameras.main.scrollY + y,
+            });
+
+            let bullet = this.playerBullets.getFirstDead();
+            if (bullet) {
+                bullet.activate(
+                    this.player.x,
+                    this.player.y,
+                );
+            } else {
+                bullet = new Bullet(
+                    Listeners.getInstance().getBulletUniqueID(),
                     this,
                     this.player.x,
                     this.player.y,
-                    'player',
+                    'shot',
                     undefined,
                 );
-                this.playerBullets.add(bullet);
-                bullet.init(angleX);
             }
-        });
-
-        this.physics.add.collider(this.walls, this.playerBullets, (wall, bullet) => {
-            bullet.destroy();
-        });
+            this.playerBullets.add(bullet);
+            bullet.init(rotation);
+            this.game.events.emit('bulletShot', {
+                id: bullet.id,
+                x: bullet.x,
+                y: bullet.y,
+                rotation,
+            });
+        }
     }
 
     sent: boolean = false;

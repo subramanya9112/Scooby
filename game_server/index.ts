@@ -51,6 +51,14 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('bulletShot', (data) => {
+        socket.broadcast.emit('otherPlayerBulletShot', data);
+    });
+
+    socket.on('bulletRemove', (data) => {
+        socket.broadcast.emit('otherPlayerBulletRemove', data);
+    });
+
     socket.on('getMap', () => {
         socket.emit('gotMap', level);
     });

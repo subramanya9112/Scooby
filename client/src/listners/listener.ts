@@ -6,8 +6,11 @@ class Listeners {
     private static instance: Listeners = new Listeners();
     private socket: Socket | undefined;
     private game: Phaser.Game | undefined;
+    private bulletNumber: number;
 
-    private constructor() { }
+    private constructor() {
+        this.bulletNumber = 0;
+    }
 
     public setUpListeners() {
         // create a new player
@@ -34,6 +37,14 @@ class Listeners {
             this.game?.events.emit('removePlayer', id);
         });
 
+        this.socket?.on('otherPlayerBulletShot', (data) => {
+            this.game?.events.emit('otherPlayerBulletShot', data);
+        });
+
+        this.socket?.on('otherPlayerBulletRemove', (data) => {
+            this.game?.events.emit('otherPlayerBulletRemove', data);
+        });
+
         this.socket?.on('levelCompleted', () => {
             console.log("Level completed");
             this.game?.events.emit(GameConst.CHANGE_SCENE, GameScene.sceneName);
@@ -51,6 +62,14 @@ class Listeners {
             this.socket?.emit('getMap', player);
         });
 
+        this.game?.events.on('bulletShot', (data: any) => {
+            this.socket?.emit('bulletShot', data);
+        });
+
+        this.game?.events.on('bulletRemove', (data: any) => {
+            this.socket?.emit('bulletRemove', data);
+        });
+
         this.game?.events.on('levelComplete', () => {
             this.socket?.emit('levelComplete');
         });
@@ -60,11 +79,22 @@ class Listeners {
         this.socket?.close();
     }
 
+    public static getInstance(): Listeners {
+        return this.instance;
+    }
+
     public static setInstance(url: string, game: Phaser.Game) {
         this.instance.removeListeners();
         this.instance.socket = io(url, { transports: ['websocket', 'polling', 'flashsocket'] });
         this.instance.game = game;
         this.instance.setUpListeners();
+    }
+
+    public getBulletUniqueID(): string {
+        if (this.socket) {
+            return this.socket.id + "_BULLET_" + this.bulletNumber++;
+        }
+        return "";
     }
 }
 

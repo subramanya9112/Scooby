@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import GameScene from '../scenes/GameScene';
 
 export default class Player extends Phaser.Physics.Arcade.Image {
     mainPlayer: boolean = false;
@@ -60,6 +61,13 @@ export default class Player extends Phaser.Physics.Arcade.Image {
                 this.setVelocityY(speed);
             } else {
                 this.setVelocityY(0);
+            }
+
+            if (Phaser.Input.Keyboard.JustDown(this.cursors.space)) {
+                (this.scene as GameScene).shoot(
+                    this.scene.input.mousePointer.x,
+                    this.scene.input.mousePointer.y,
+                );
             }
         }
         this.setDepth(this.y);
