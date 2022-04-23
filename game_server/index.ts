@@ -4,6 +4,7 @@ const app = express();
 const port = process.env.PORT || 80;
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import EnemyModel from './models/EnemyModel';
 import PlayerModel from './models/PlayerModel';
 import Level from './room_generator/class/Level';
 import Tiles from './room_generator/class/Tiles';
@@ -14,6 +15,7 @@ const io = new Server(server);
 app.use(express.json());
 
 let players: { [id: string]: PlayerModel; } = {};
+let enemies: { [id: string]: EnemyModel; } = {};
 
 let levelData = Level.GetLevel(1);
 let level = Tiles.GetLevel(levelData);
@@ -70,6 +72,15 @@ io.on('connection', (socket) => {
         socket.broadcast.emit("levelCompleted");
     });
 });
+
+setInterval(function () {
+    for (let enemyId in enemies) {
+        enemies[enemyId].move(players);
+        enemies[enemyId].shoot(players);
+    };
+    // method to be executed;
+}, 1000 / 60);
+
 
 app.get('/status', async (req: Request, res: Response) => {
     res.send("Server is running");

@@ -2,8 +2,8 @@
     "files.exclude": {
         "Design": true,
         "docker_manager": true,
-        // "nginx": true,
-        // "server": true,
+        "nginx": true,
+        "server": true,
         ".gitattributes": true,
         "project_diary.txt": true,
         "run": true,

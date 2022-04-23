@@ -29,6 +29,7 @@ class Listeners {
         });
 
         this.socket?.on('gotMap', (player) => {
+            console.log(player)
             this.game?.events.emit('gotMap', player);
         });
 

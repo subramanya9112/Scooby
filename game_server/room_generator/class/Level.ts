@@ -97,7 +97,6 @@ class Level {
                 }
             }
         }
-        // // for (let i = 0; i < 2000000000; i++);
     }
 
     private getLevelDesign() {

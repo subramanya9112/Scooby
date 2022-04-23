@@ -11,6 +11,7 @@ export default class GameScene extends Phaser.Scene {
     roomCollider: Phaser.Physics.Arcade.StaticGroup | undefined;
     playerBullets: Phaser.Physics.Arcade.Group | undefined;
     otherPlayerBullets: Phaser.Physics.Arcade.Group | undefined;
+    sent: boolean = false;
 
     constructor() {
         super(GameScene.sceneName);
@@ -18,6 +19,7 @@ export default class GameScene extends Phaser.Scene {
 
     init() {
         this.listenEvents();
+        this.sent = false;
     }
 
     createMapData(data: any) {
@@ -206,7 +208,6 @@ export default class GameScene extends Phaser.Scene {
         }
     }
 
-    sent: boolean = false;
     roomCollision() {
         console.log('room collision');
         if (this.sent === false) {

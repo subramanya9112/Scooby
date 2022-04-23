@@ -10,6 +10,7 @@ class Room {
     private direction: number;
     private roomWidth: number;
     private roomHeight: number;
+
     constructor(roomType: RoomType, direction: number, roomWidth: number, roomHeight: number) {
         this.roomType = roomType;
         this.direction = direction;
@@ -250,7 +251,7 @@ class Room {
                     break;
                 case Direction.DOWN:
                     yStart = (roomSize + dimension.width) / 2;
-                    yEnd = (roomSize + dimension.width) / 2+1;
+                    yEnd = (roomSize + dimension.width) / 2 + 1;
                     xStart = roomSize / 2 - 2;
                     xEnd = roomSize / 2 + 2;
                     break;
