@@ -27,7 +27,7 @@ class Level {
         for (let y = 0; y < this.arrLength; y++) {
             let row: Room[] = new Array<Room>();
             for (let x = 0; x < this.arrLength; x++) {
-                row.push(new Room(Place.EMPTY, 0, 12, 12));
+                row.push(new Room(Place.EMPTY, 0, 12, 12, 0));
             }
             this.levelDesign.push(row);
         }
@@ -65,6 +65,10 @@ class Level {
         return Place.ENEMY;
     }
 
+    private getRandomEnemyNumber() {
+        return GetRandomNumber(20, 10);
+    }
+
     private workOnMap(newX: number, newY: number, direction: Direction, oppDirection: Direction) {
         let notAllowed = [Place.WORK, Place.CHEST, Place.START, Place.END];
         let notMovePlace = [Place.CHEST, Place.WORK, Place.END];
@@ -81,6 +85,9 @@ class Level {
                         height: 12,
                     });
                 } else {
+                    if (roomType === Place.ENEMY) {
+                        this.levelDesign[newX][newY].setEnemyNumber(this.getRandomEnemyNumber());
+                    }
                     this.levelDesign[newX][newY].setRoomDimension(this.getRoomDimension());
                 }
 

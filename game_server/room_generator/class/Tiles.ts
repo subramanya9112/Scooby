@@ -1,47 +1,48 @@
+import { v4 as uuid } from 'uuid';
+import EnemyModel from '../../models/EnemyModel';
 import RoomType from "../enums/RoomType";
+import RoomInterface from "../interfaces/RoomInterface";
 import Room from "./Room";
-import LevelInterface from '../interfaces/LevelInterface';
 
 class Tiles {
-    private readonly tileSize: number = 64;
-    private roomSize: number = 40;
+    private static readonly tileSize: number = 64;
+    private static roomSize: number = 40;
 
-    private getTiles(levelDesign: Room[][]) {
-        let level: LevelInterface = {
-            levelDesign: levelDesign,
-            tiles: [],
-            walls: [],
-            doors: [],
-            roomCollider: [],
-        };
+    static GetLevel(levelDesign: Room[][]) {
+        let level: RoomInterface[] = [];
+        let enemies: { [id: string]: EnemyModel; } = {};
 
         levelDesign.forEach((rowRoom, row) => {
             rowRoom.forEach((room, col) => {
-                if (room.getRoomType() === RoomType.END) {
-                    level = {
-                        levelDesign: level.levelDesign,
-                        tiles: level.tiles.concat(room.getTiles(this.tileSize, this.roomSize, row, col)),
-                        walls: level.walls.concat(room.getWalls(this.tileSize, this.roomSize, row, col)),
-                        doors: level.doors.concat(room.getDoors(this.tileSize, this.roomSize, row, col)),
-                        roomCollider: level.roomCollider.concat(room.getRoomCollider(this.tileSize, this.roomSize, row, col)),
-                    };
-                } else if (room.getRoomType() !== RoomType.EMPTY) {
-                    level = {
-                        levelDesign: level.levelDesign,
-                        tiles: level.tiles.concat(room.getTiles(this.tileSize, this.roomSize, row, col)),
-                        walls: level.walls.concat(room.getWalls(this.tileSize, this.roomSize, row, col)),
-                        doors: level.doors.concat(room.getDoors(this.tileSize, this.roomSize, row, col)),
-                        roomCollider: level.roomCollider,
-                    };
+                if (room.getRoomType() !== RoomType.EMPTY) {
+                    enemies = Object.assign({}, enemies, {});
+                    let id = uuid();
+                    if (room.getRoomType() !== RoomType.START) {
+                        let roomInt: RoomInterface = {
+                            id,
+                            tiles: room.getTiles(this.tileSize, this.roomSize, row, col),
+                            walls: room.getWalls(this.tileSize, this.roomSize, row, col),
+                            doors: room.getDoors(this.tileSize, this.roomSize, row, col),
+                            roomCollider: [room.getRoomCollider(this.tileSize, this.roomSize, row, col)],
+                            enemies: room.getEnemies(this.tileSize, this.roomSize, row, col),
+                        };
+                        level.push(roomInt);
+                    } else {
+                        let roomInt: RoomInterface = {
+                            id,
+                            tiles: room.getTiles(this.tileSize, this.roomSize, row, col),
+                            walls: room.getWalls(this.tileSize, this.roomSize, row, col),
+                            doors: room.getDoors(this.tileSize, this.roomSize, row, col),
+                            roomCollider: [],
+                            enemies: room.getEnemies(this.tileSize, this.roomSize, row, col),
+                        };
+                        level.push(roomInt);
+                    }
                 }
             })
         });
 
-        return level;
-    }
-
-    public static GetLevel(levelDesign: Room[][]) {
-        return (new Tiles()).getTiles(levelDesign);
+        return { level, enemies };
     }
 };
 

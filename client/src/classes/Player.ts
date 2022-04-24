@@ -30,7 +30,7 @@ export default class Player extends Phaser.Physics.Arcade.Image {
             this.keyS = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
             this.keyD = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
             this.keyW = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
-            this.scene.cameras.main.startFollow(this, true, 0.03, 0.03, 0, 0);
+            this.scene.cameras.main.startFollow(this, true, 0.05, 0.05, 0, 0);
         }
 
         // enable physics

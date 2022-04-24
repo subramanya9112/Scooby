@@ -2,6 +2,8 @@ import Phaser from 'phaser';
 import Player from '../classes/Player';
 import Bullet from '../classes/Bullet';
 import Listeners from '../listners/listener';
+import Enemy from '../classes/Enemy';
+import Collider from '../classes/Colliders';
 
 export default class GameScene extends Phaser.Scene {
     public static sceneName = 'GameScene';
@@ -9,9 +11,9 @@ export default class GameScene extends Phaser.Scene {
     walls: Phaser.Physics.Arcade.StaticGroup | undefined;
     otherPlayers: Phaser.Physics.Arcade.Group | undefined;
     roomCollider: Phaser.Physics.Arcade.StaticGroup | undefined;
+    enemies: Phaser.Physics.Arcade.Group | undefined;
     playerBullets: Phaser.Physics.Arcade.Group | undefined;
     otherPlayerBullets: Phaser.Physics.Arcade.Group | undefined;
-    sent: boolean = false;
 
     constructor() {
         super(GameScene.sceneName);
@@ -19,32 +21,57 @@ export default class GameScene extends Phaser.Scene {
 
     init() {
         this.listenEvents();
-        this.sent = false;
     }
 
     createMapData(data: any) {
-        console.log(data);
-        data['tiles'].forEach((val: { x: number; y: number; }) => {
-            this.add.sprite(val.x, val.y, 'tile').setInteractive().setOrigin(0, 0).setDepth(-1);
-        })
-        data['doors'].forEach((val: { x: number; y: number; }) => {
-            this.add.sprite(val.x, val.y, 'door').setInteractive().setOrigin(0, 0).setDepth(-1);
-        })
+        for (let i = 0; i < data.length; i++) {
+            let room = data[i];
 
-        data['walls'].forEach((val: { x: number | undefined; y: number; }) => {
-            this.walls?.create(val.x, val.y - 32, 'wall', 0)
-                .setScale(2)
-                .setOrigin(0, 0)
-                .setSize(64, 64)
-                .setOffset(16, 56)
-                .setDepth(val.y - 32);
-        });
+            room['tiles'].forEach((val: { x: number; y: number; height: number, width: number }) => {
+                this.add.sprite(val.x, val.y, 'tile')
+                    .setInteractive()
+                    .setOrigin(0, 0)
+                    .setScale(val.height, val.width)
+                    .setDepth(-1);
+            });
 
-        data['roomCollider'].forEach((val: { startX: number; width: number; startY: number; height: number; }) => {
-            let collider = new Phaser.GameObjects.Container(this, val.startX + val.width / 2, val.startY + val.height / 2)
-                .setSize(val.width, val.height)
-            this.roomCollider?.add(collider);
-        });
+            room['doors'].forEach((val: { x: number; y: number; }) => {
+                this.add.sprite(val.x, val.y, 'door').setInteractive().setOrigin(0, 0).setDepth(-1);
+            });
+
+            room['walls'].forEach((val: { x: number | undefined; y: number; }) => {
+                this.walls?.create(val.x, val.y - 32, 'wall', 0)
+                    .setScale(2)
+                    .setOrigin(0, 0)
+                    .setSize(64, 64)
+                    .setOffset(16, 56)
+                    .setDepth(val.y - 32);
+            });
+
+            room['roomCollider'].forEach((val: { startX: number; width: number; startY: number; height: number; }) => {
+                let collider = new Collider(
+                    this,
+                    val.startX + val.width / 2,
+                    val.startY + val.height / 2,
+                    val.width,
+                    val.height,
+                    ""
+                );
+                this.roomCollider?.add(collider);
+            });
+
+            room['enemies'].forEach((val: { x: number; y: number; }) => {
+                let enemy = new Enemy(
+                    "",
+                    this,
+                    val.x,
+                    val.y,
+                    'player',
+                    undefined,
+                );
+                this.enemies?.add(enemy);
+            });
+        }
     }
 
     listenEvents() {
@@ -144,31 +171,41 @@ export default class GameScene extends Phaser.Scene {
         // emit event to server that a new player has joined
         this.game.events.emit('newPlayer', { x: this.player.x, y: this.player.y });
 
+        // create room collider group
         this.roomCollider = this.physics.add.staticGroup();
-        this.physics.add.overlap(this.player, this.roomCollider, this.roomCollision.bind(this));
 
         // create an other players group
         this.otherPlayers = this.physics.add.group();
         this.otherPlayers.runChildUpdate = true;
 
-        this.walls = this.physics.add.staticGroup();
-        this.physics.add.collider(this.player, this.walls);
-        this.physics.add.collider(this.player, this.otherPlayers);
-        this.game.events.emit('getMap');
+        // create enemies group
+        this.enemies = this.physics.add.group();
 
+        // create walls group
+        this.walls = this.physics.add.staticGroup();
+
+        // create other player bullets group
         this.otherPlayerBullets = this.physics.add.group();
 
+        // create player bullets group
         this.playerBullets = this.physics.add.group();
         this.input.on('pointerdown', (pointer: PointerEvent) => {
             if (pointer.button == 0)
                 this.shoot(pointer.x, pointer.y);
         });
+
+        this.physics.add.collider(this.player, this.walls);
+        this.physics.add.collider(this.player, this.otherPlayers);
+        this.physics.add.collider(this.player, this.enemies);
         this.physics.add.collider(this.walls, this.playerBullets, (wall, bullet) => {
             this.game.events.emit('bulletRemove', {
                 id: (bullet as Bullet).id
             });
             (bullet as Bullet).deactivate();
         });
+        this.physics.add.overlap(this.player, this.roomCollider, this.roomCollision.bind(this));
+
+        this.game.events.emit('getMap');
     }
 
     shoot(x: number, y: number) {
@@ -208,12 +245,13 @@ export default class GameScene extends Phaser.Scene {
         }
     }
 
-    roomCollision() {
+    roomCollision(object1: Phaser.GameObjects.GameObject, object2: Phaser.GameObjects.GameObject) {
+        let player = object1 as Player;
+        let collider = object2 as Collider;
+
+        collider.destroy();
         console.log('room collision');
-        if (this.sent === false) {
-            this.sent = true;
-            this.game.events.emit("levelComplete");
-        }
+        // this.game.events.emit("levelComplete");
     }
 
     update(time: number, delta: number): void {

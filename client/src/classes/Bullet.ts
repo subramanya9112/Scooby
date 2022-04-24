@@ -23,7 +23,7 @@ export default class Player extends Phaser.Physics.Arcade.Image {
 
     init(rotation: number) {
         this.setAngle(Phaser.Math.RadToDeg(rotation));
-        this.scene.physics.velocityFromRotation(rotation, 500, this.body.velocity)
+        this.scene.physics.velocityFromRotation(rotation, 1000, this.body.velocity)
     }
 
     activate(

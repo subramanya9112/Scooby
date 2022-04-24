@@ -4,20 +4,24 @@ import WallInterface from '../interfaces/WallInterface';
 import TileInterface from '../interfaces/TileInterface';
 import RoomColliderInterface from '../interfaces/RoomColliderInterface';
 import DoorInterface from '../interfaces/DoorInterface';
+import EnemyInterface from '../interfaces/EnemyInterface';
 
 class Room {
     private roomType: RoomType;
     private direction: number;
     private roomWidth: number;
     private roomHeight: number;
+    private numberOfEnemies: number;
 
-    constructor(roomType: RoomType, direction: number, roomWidth: number, roomHeight: number) {
+    constructor(roomType: RoomType, direction: number, roomWidth: number, roomHeight: number, numberOfEnemies: number) {
         this.roomType = roomType;
         this.direction = direction;
         this.roomWidth = roomWidth;
         this.roomHeight = roomHeight;
+        this.numberOfEnemies = numberOfEnemies;
     }
 
+    // Getter and Setters
     getRoomType() {
         return this.roomType;
     }
@@ -38,19 +42,26 @@ class Room {
         this.roomHeight = dimension.height;
     }
 
+    getEnemyNumber() {
+        return this.numberOfEnemies;
+    }
+
+    setEnemyNumber(numberOfEnemies: number) {
+        this.numberOfEnemies = numberOfEnemies;
+    }
+
+    // Generate the data based on the room type
     getTiles(tileSize: number, roomSize: number, row: number, col: number): TileInterface[] {
         let dimension = this.getRoomDimension();
         let tiles: TileInterface[] = [];
 
         // add room tiles
-        for (let y = 0; y < dimension.width; y++) {
-            for (let x = 0; x < dimension.height; x++) {
-                tiles.push({
-                    x: (roomSize * col + x + (roomSize - dimension.height) / 2) * tileSize,
-                    y: (roomSize * row + y + (roomSize - dimension.width) / 2) * tileSize,
-                });
-            }
-        }
+        tiles.push({
+            x: (roomSize * col + (roomSize - dimension.height) / 2) * tileSize,
+            y: (roomSize * row + (roomSize - dimension.width) / 2) * tileSize,
+            width: dimension.width,
+            height: dimension.height,
+        });
 
         // add pathway tiles
         Room.getDirections(this).forEach(direction => {
@@ -82,14 +93,12 @@ class Room {
                     break;
             }
 
-            for (let x = xStart; x < xEnd; x++) {
-                for (let y = yStart; y < yEnd; y++) {
-                    tiles.push({
-                        x: (roomSize * col + x) * tileSize,
-                        y: (roomSize * row + y) * tileSize,
-                    });
-                }
-            }
+            tiles.push({
+                x: (roomSize * col + xStart) * tileSize,
+                y: (roomSize * row + yStart) * tileSize,
+                height: xEnd - xStart,
+                width: yEnd - yStart,
+            });
         });
 
         return tiles;
@@ -288,6 +297,31 @@ class Room {
         };
     }
 
+    getEnemies(tileSize: number, roomSize: number, row: number, col: number) {
+        let dimension = this.getRoomDimension();
+        let enemies: EnemyInterface[] = [];
+
+        while (enemies.length < this.getEnemyNumber()) {
+            let x = (roomSize * col + Math.floor(Math.random() * dimension.height) + (roomSize - dimension.height) / 2) * tileSize;
+            let y = (roomSize * row + Math.floor(Math.random() * dimension.width) + (roomSize - dimension.width) / 2) * tileSize;
+
+            for (var i = 0; i < enemies.length; i++) {
+                if (x === enemies[i].x && y === enemies[i].y) {
+                    continue;
+                }
+            }
+
+            enemies.push({
+                x,
+                y,
+                type: "",
+            });
+        }
+
+        return enemies;
+    }
+
+    // Level Creation code
     addDirection(direction: Direction) {
         this.direction |= 1 << direction;
     }
@@ -309,12 +343,6 @@ class Room {
             returnVal |= 1 << direction[i];
         }
         return returnVal;
-    }
-
-    // TODO: Remove this
-    print() {
-        // @ts-ignore
-        process.stdout.write(this.roomType + ":" + this.direction + ":" + this.roomWidth + "-" + this.roomHeight);
     }
 }
 

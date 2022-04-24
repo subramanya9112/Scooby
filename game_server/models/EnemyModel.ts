@@ -28,11 +28,9 @@ class EnemyModel {
                     return;
                 }
 
-                if (distance < 10 * 64) {
-                    if (distance < minimumDistance) {
-                        playerIdToMove = playerId;
-                        minimumDistance = distance;
-                    }
+                if (distance < minimumDistance) {
+                    playerIdToMove = playerId;
+                    minimumDistance = distance;
                 }
             }
 
@@ -53,14 +51,9 @@ class EnemyModel {
                 let player = players[playerId];
                 let distance = Math.sqrt(Math.pow(player.x - this.x, 2) + Math.pow(player.y - this.y, 2));
 
-                if (distance < 10 * 64) {
-                    if (distance < minimumDistance) {
-                        playerIdToMove = playerId;
-                        minimumDistance = distance;
-                    }
-
-
-                    break;
+                if (distance < minimumDistance) {
+                    playerIdToMove = playerId;
+                    minimumDistance = distance;
                 }
             }
             if (playerIdToMove) {

@@ -4,7 +4,6 @@ const app = express();
 const port = process.env.PORT || 80;
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import EnemyModel from './models/EnemyModel';
 import PlayerModel from './models/PlayerModel';
 import Level from './room_generator/class/Level';
 import Tiles from './room_generator/class/Tiles';
@@ -14,11 +13,9 @@ const io = new Server(server);
 
 app.use(express.json());
 
+let doorStatus = false;
 let players: { [id: string]: PlayerModel; } = {};
-let enemies: { [id: string]: EnemyModel; } = {};
-
-let levelData = Level.GetLevel(1);
-let level = Tiles.GetLevel(levelData);
+let { level, enemies } = Tiles.GetLevel(Level.GetLevel(1));
 
 io.on('connection', (socket) => {
     console.log('a user connected');
@@ -42,6 +39,13 @@ io.on('connection', (socket) => {
 
         // inform the new player of the other players
         socket.emit('createPlayers', players);
+
+        // inform the new player of the other players
+        socket.emit('doorStatus', doorStatus);
+    });
+
+    socket.on('getDoorStatus', () => {
+        socket.emit('doorStatus', doorStatus);
     });
 
     socket.on('playerMovement', (playerData) => {
@@ -66,8 +70,8 @@ io.on('connection', (socket) => {
     });
 
     socket.on('levelComplete', () => {
-        levelData = Level.GetLevel(1);
-        level = Tiles.GetLevel(levelData);
+        let data = Tiles.GetLevel(Level.GetLevel(1));
+        level = data.level, enemies = data.enemies;
         socket.emit("levelCompleted");
         socket.broadcast.emit("levelCompleted");
     });
@@ -78,9 +82,7 @@ setInterval(function () {
         enemies[enemyId].move(players);
         enemies[enemyId].shoot(players);
     };
-    // method to be executed;
-}, 1000 / 60);
-
+}, 1000);
 
 app.get('/status', async (req: Request, res: Response) => {
     res.send("Server is running");
