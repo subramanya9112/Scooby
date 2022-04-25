@@ -3,8 +3,6 @@
         "**/.cache/**": true,
         "**/dist/**": true,
         "**/node_modules/**": true,
-
-
         "Design": true,
         "docker_manager": true,
         "nginx": true,

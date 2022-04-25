@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/subramanya9112/scooby/issues"
   },
-  "homepage": "https://github.com/subramanya9112/scooby#readme"
+  "homepage": "https://github.com/subramanya9112/scooby#readme",
+  "devDependencies": {
+    "typescript": "^4.6.3"
+  }
 }

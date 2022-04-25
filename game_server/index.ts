@@ -7,81 +7,87 @@ import { Server } from 'socket.io';
 import PlayerModel from './models/PlayerModel';
 import Level from './room_generator/class/Level';
 import Tiles from './room_generator/class/Tiles';
+import * as Defaults from '../shared/SERVER_GAME_CONSTANT';
 
 const server = createServer(app);
 const io = new Server(server);
 
 app.use(express.json());
 
-let doorStatus = false;
 let players: { [id: string]: PlayerModel; } = {};
-let { level, enemies } = Tiles.GetLevel(Level.GetLevel(1));
+let { levels, rooms, enemies } = Tiles.GetLevel(Level.GetLevel(1));
 
-io.on('connection', (socket) => {
+io.on(Defaults.GAME_SERVER_CONNECTION, (socket) => {
     console.log('a user connected');
 
     // player disconnected
-    socket.on('disconnect', () => {
+    socket.on(Defaults.GAME_SERVER_DISCONNECT, () => {
         console.log('a user disconnected');
 
         // delete user data from the server
         delete players[socket.id];
 
         // emit a message to all players to remove this player
-        io.emit('removePlayer', socket.id);
+        io.emit(Defaults.SERVER_GAME_REMOVE_PLAYER, socket.id);
     });
 
-    socket.on('newPlayer', ({ x, y }) => {
+    socket.on(Defaults.GAME_SERVER_NEW_PLAYER, ({ x, y }) => {
         players[socket.id] = new PlayerModel(socket.id, x, y);
 
         // inform the other players of the new player that joined
-        socket.broadcast.emit('spawnPlayer', players[socket.id]);
+        socket.broadcast.emit(Defaults.SERVER_GAME_SPAWN_NEW_PLAYER, players[socket.id]);
 
         // inform the new player of the other players
-        socket.emit('createPlayers', players);
-
-        // inform the new player of the other players
-        socket.emit('doorStatus', doorStatus);
+        socket.emit(Defaults.SERVER_GAME_CREATE_EXISTING_PLAYERS, players);
     });
 
-    socket.on('getDoorStatus', () => {
-        socket.emit('doorStatus', doorStatus);
-    });
-
-    socket.on('playerMovement', (playerData) => {
+    socket.on(Defaults.GAME_SERVER_PLAYER_MOVED, (playerData) => {
         if (players[socket.id]) {
             players[socket.id].x = playerData.x;
             players[socket.id].y = playerData.y;
 
-            socket.broadcast.emit('playerMovement', players[socket.id]);
+            socket.broadcast.emit(Defaults.SERVER_GAME_PLAYER_MOVED, players[socket.id]);
         }
     });
 
-    socket.on('bulletShot', (data) => {
-        socket.broadcast.emit('otherPlayerBulletShot', data);
+    socket.on(Defaults.GAME_SERVER_PLAYER_BULLET_SHOOT, (data) => {
+        socket.broadcast.emit(Defaults.SERVER_GAME_PLAYER_BULLET_SHOOT, data);
     });
 
-    socket.on('bulletRemove', (data) => {
-        socket.broadcast.emit('otherPlayerBulletRemove', data);
+    socket.on(Defaults.GAME_SERVER_PLAYER_BULLET_REMOVE, (data) => {
+        socket.broadcast.emit(Defaults.SERVER_GAME_PLAYER_BULLET_REMOVE, data);
     });
 
-    socket.on('getMap', () => {
-        socket.emit('gotMap', level);
+    socket.on(Defaults.GAME_SERVER_GIVE_MAP, () => {
+        socket.emit(Defaults.SERVER_GAME_TAKE_MAP, levels);
     });
 
-    socket.on('levelComplete', () => {
+    socket.on(Defaults.GAME_SERVER_ROOM_ENTERRED, (roomId) => {
+        if (rooms[roomId] && rooms[roomId].active === false) {
+            rooms[roomId].active = true;
+            socket.broadcast.emit(Defaults.SERVER_GAME_ROOM_ENTERRED, roomId);
+        }
+    });
+
+    socket.on(Defaults.GAME_SERVER_END_LEVEL, () => {
         let data = Tiles.GetLevel(Level.GetLevel(1));
-        level = data.level, enemies = data.enemies;
-        socket.emit("levelCompleted");
-        socket.broadcast.emit("levelCompleted");
+        levels = data.levels, enemies = data.enemies, rooms = data.rooms;
+        io.emit(Defaults.SERVER_GAME_END_LEVEL);
     });
 });
 
 setInterval(function () {
+    for (let room in rooms) {
+        if (rooms.room.enemies.length == 0 && rooms.room.active == true) {
+            rooms.room.active = false;
+            io.emit("openDoor", room);
+        }
+    }
+
     for (let enemyId in enemies) {
         enemies[enemyId].move(players);
         enemies[enemyId].shoot(players);
-    };
+    }
 }, 1000);
 
 app.get('/status', async (req: Request, res: Response) => {

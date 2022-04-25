@@ -4,6 +4,7 @@ import Bullet from '../classes/Bullet';
 import Listeners from '../listners/listener';
 import Enemy from '../classes/Enemy';
 import Collider from '../classes/Colliders';
+import * as Defaults from './../../../shared/SOCKET_GAME_CONSTANT';
 
 export default class GameScene extends Phaser.Scene {
     public static sceneName = 'GameScene';
@@ -14,6 +15,9 @@ export default class GameScene extends Phaser.Scene {
     enemies: Phaser.Physics.Arcade.Group | undefined;
     playerBullets: Phaser.Physics.Arcade.Group | undefined;
     otherPlayerBullets: Phaser.Physics.Arcade.Group | undefined;
+    doors: Phaser.Physics.Arcade.Group | undefined;
+    doorCollider: Phaser.Physics.Arcade.Collider | undefined;
+    doorBulletCollider: Phaser.Physics.Arcade.Collider | undefined;
 
     constructor() {
         super(GameScene.sceneName);
@@ -39,6 +43,17 @@ export default class GameScene extends Phaser.Scene {
                 this.add.sprite(val.x, val.y, 'door').setInteractive().setOrigin(0, 0).setDepth(-1);
             });
 
+            room['doors'].forEach((val: { x: number; y: number; }) => {
+                this.doors?.create(val.x, val.y - 32, 'wall', 0)
+                    .setOrigin(0, 0)
+                    .setScale(2)
+                    .setSize(32, 32)
+                    .setOffset(0, 16)
+                    .setDepth(val.y - 32)
+                    .setPushable(false)
+                    .setVisible(false);
+            });
+
             room['walls'].forEach((val: { x: number | undefined; y: number; }) => {
                 this.walls?.create(val.x, val.y - 32, 'wall', 0)
                     .setScale(2)
@@ -55,7 +70,7 @@ export default class GameScene extends Phaser.Scene {
                     val.startY + val.height / 2,
                     val.width,
                     val.height,
-                    ""
+                    room.id
                 );
                 this.roomCollider?.add(collider);
             });
@@ -76,7 +91,7 @@ export default class GameScene extends Phaser.Scene {
 
     listenEvents() {
         // create a new player
-        this.game.events?.on('createPlayers', (data: { [id: string]: any; }) => {
+        this.game.events?.on(Defaults.SOCKET_GAME_CREATE_EXISTING_PLAYERS, (data: { [id: string]: any; }) => {
             var players: { [id: string]: any; } = data['players'];
             var currentId: string = data['currentId'];
             Object.keys(players).forEach((key) => {
@@ -95,7 +110,7 @@ export default class GameScene extends Phaser.Scene {
         });
 
         // spawn a new player
-        this.game.events?.on('spawnPlayer', (player: { [id: string]: any; }) => {
+        this.game.events?.on(Defaults.SOCKET_GAME_SPAWN_NEW_PLAYER, (player: { [id: string]: any; }) => {
             let newPlayer = new Player(this,
                 player.x,
                 player.y,
@@ -108,7 +123,7 @@ export default class GameScene extends Phaser.Scene {
         });
 
         // a player has moved
-        this.game.events?.on('otherPlayerMovement', (player: { [id: string]: any; }) => {
+        this.game.events?.on(Defaults.SOCKET_GAME_PLAYER_MOVED, (player: { [id: string]: any; }) => {
             this.otherPlayers?.getChildren().forEach((val) => {
                 let otherPlayer = val as Player;
                 if (otherPlayer.id === player.id) {
@@ -118,7 +133,7 @@ export default class GameScene extends Phaser.Scene {
         });
 
         // a player has left the game
-        this.game.events?.on('removePlayer', (id: string) => {
+        this.game.events?.on(Defaults.SOCKET_GAME_REMOVE_PLAYER, (id: string) => {
             this.otherPlayers?.getChildren().forEach((val) => {
                 let otherPlayer = val as Player;
                 if (otherPlayer.id === id) {
@@ -127,7 +142,7 @@ export default class GameScene extends Phaser.Scene {
             });
         });
 
-        this.game.events?.on('otherPlayerBulletShot', (data: any) => {
+        this.game.events?.on(Defaults.SOCKET_GAME_PLAYER_BULLET_SHOOT, (data: any) => {
             if (this.otherPlayerBullets) {
                 let bullet = this.otherPlayerBullets.getFirstDead();
                 if (bullet) {
@@ -151,7 +166,7 @@ export default class GameScene extends Phaser.Scene {
             }
         });
 
-        this.game.events?.on('otherPlayerBulletRemove', (data: any) => {
+        this.game.events?.on(Defaults.SOCKET_GAME_PLAYER_BULLET_REMOVE, (data: any) => {
             let id = data.id;
             this.otherPlayerBullets?.getChildren().forEach((val) => {
                 let otherPlayer = val as Bullet;
@@ -161,7 +176,7 @@ export default class GameScene extends Phaser.Scene {
             });
         });
 
-        this.game.events?.on('gotMap', (data: any) => {
+        this.game.events?.on(Defaults.SOCKET_GAME_TAKE_MAP, (data: any) => {
             this.createMapData(data);
         });
     }
@@ -169,10 +184,16 @@ export default class GameScene extends Phaser.Scene {
     create() {
         this.player = new Player(this, (4 * 40 + 20) * 64, (4 * 40 + 20) * 64, 'player', undefined, "", true);
         // emit event to server that a new player has joined
-        this.game.events.emit('newPlayer', { x: this.player.x, y: this.player.y });
+        this.game.events.emit(Defaults.GAME_SOCKET_NEW_PLAYER, { x: this.player.x, y: this.player.y });
+
+        // create walls group
+        this.walls = this.physics.add.staticGroup();
 
         // create room collider group
         this.roomCollider = this.physics.add.staticGroup();
+
+        // create doors group
+        this.doors = this.physics.add.group();
 
         // create an other players group
         this.otherPlayers = this.physics.add.group();
@@ -180,9 +201,6 @@ export default class GameScene extends Phaser.Scene {
 
         // create enemies group
         this.enemies = this.physics.add.group();
-
-        // create walls group
-        this.walls = this.physics.add.staticGroup();
 
         // create other player bullets group
         this.otherPlayerBullets = this.physics.add.group();
@@ -194,18 +212,24 @@ export default class GameScene extends Phaser.Scene {
                 this.shoot(pointer.x, pointer.y);
         });
 
+        this.physics.add.overlap(this.player, this.roomCollider, this.roomCollision.bind(this));
         this.physics.add.collider(this.player, this.walls);
         this.physics.add.collider(this.player, this.otherPlayers);
         this.physics.add.collider(this.player, this.enemies);
-        this.physics.add.collider(this.walls, this.playerBullets, (wall, bullet) => {
-            this.game.events.emit('bulletRemove', {
-                id: (bullet as Bullet).id
-            });
-            (bullet as Bullet).deactivate();
-        });
-        this.physics.add.overlap(this.player, this.roomCollider, this.roomCollision.bind(this));
+        this.doorCollider = this.physics.add.collider(this.player, this.doors);
+        this.doorCollider.active = false;
+        this.physics.add.collider(this.walls, this.playerBullets, this.wallBulletCollision.bind(this));
+        this.doorBulletCollider = this.physics.add.collider(this.doors, this.playerBullets, this.wallBulletCollision.bind(this));
+        this.doorBulletCollider.active = false;
 
-        this.game.events.emit('getMap');
+        this.game.events.emit(Defaults.GAME_SOCKET_GIVE_MAP);
+    }
+
+    wallBulletCollision(wall: Phaser.GameObjects.GameObject, bullet: Phaser.GameObjects.GameObject) {
+        this.game.events.emit(Defaults.GAME_SOCKET_PLAYER_BULLET_REMOVE, {
+            id: (bullet as Bullet).id
+        });
+        (bullet as Bullet).deactivate();
     }
 
     shoot(x: number, y: number) {
@@ -236,7 +260,7 @@ export default class GameScene extends Phaser.Scene {
             }
             this.playerBullets.add(bullet);
             bullet.init(rotation);
-            this.game.events.emit('bulletShot', {
+            this.game.events.emit(Defaults.GAME_SOCKET_PLAYER_BULLET_SHOOT, {
                 id: bullet.id,
                 x: bullet.x,
                 y: bullet.y,
@@ -250,8 +274,22 @@ export default class GameScene extends Phaser.Scene {
         let collider = object2 as Collider;
 
         collider.destroy();
-        console.log('room collision');
-        // this.game.events.emit("levelComplete");
+        if (this.doorBulletCollider)
+            this.doorBulletCollider.active = true;
+        if (this.doorCollider)
+            this.doorCollider.active = true;
+        this.doors?.getChildren().forEach((val) => {
+            // @ts-ignore
+            val.setVisible(true);
+        });
+        // TODO: 
+        // this.game.events.emit("roomCollided", collider.roomId);
+    }
+
+    doorUpdate(doorOpen: boolean) {
+        if (doorOpen) {
+
+        }
     }
 
     update(time: number, delta: number): void {
@@ -261,7 +299,7 @@ export default class GameScene extends Phaser.Scene {
             const { x, y } = this.player;
             const old = this.player.oldPosition;
             if (old && (old.x !== x || old.y !== y)) {
-                this.game.events.emit('playerMovement', { x, y });
+                this.game.events.emit(Defaults.GAME_SOCKET_PLAYER_MOVED, { x, y });
             }
             // save old position data
             this.player.oldPosition = { x, y };

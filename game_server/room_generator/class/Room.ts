@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid';
 import RoomType from '../enums/RoomType';
 import Direction from '../enums/Direction';
 import WallInterface from '../interfaces/WallInterface';
@@ -5,6 +6,9 @@ import TileInterface from '../interfaces/TileInterface';
 import RoomColliderInterface from '../interfaces/RoomColliderInterface';
 import DoorInterface from '../interfaces/DoorInterface';
 import EnemyInterface from '../interfaces/EnemyInterface';
+import RoomInterface from '../interfaces/RoomInterface';
+import RoomModel from '../../models/RoomModel';
+import EnemyModel from '../../models/EnemyModel';
 
 class Room {
     private roomType: RoomType;
@@ -319,6 +323,46 @@ class Room {
         }
 
         return enemies;
+    }
+
+    getData(tileSize: number, roomSize: number, row: number, col: number) {
+        let id = uuid();
+        let roomInt: RoomInterface = {
+            id,
+            tiles: this.getTiles(tileSize, roomSize, row, col),
+            walls: this.getWalls(tileSize, roomSize, row, col),
+            doors: this.getDoors(tileSize, roomSize, row, col),
+            roomCollider: this.getRoomType() === RoomType.START ? [] : [this.getRoomCollider(tileSize, roomSize, row, col)],
+            enemies: this.getEnemies(tileSize, roomSize, row, col),
+        };
+
+        let dimension = this.getRoomDimension();
+        let room = new RoomModel(
+            id,
+            (roomSize * col + (roomSize - dimension.height) / 2) * tileSize,
+            (roomSize * row + (roomSize - dimension.width) / 2) * tileSize,
+            dimension.height,
+            dimension.width,
+        );
+
+        let enemy: { [id: string]: EnemyModel; } = {};
+        roomInt.enemies.forEach(e => {
+            id = uuid();
+            enemy[id] = new EnemyModel(
+                id,
+                e.x,
+                e.y,
+                100,
+                room
+            );
+            room.addEnemies(enemy[id]);
+        });
+
+        return {
+            level: roomInt,
+            enemy,
+            rooms: { id: room }
+        }
     }
 
     // Level Creation code

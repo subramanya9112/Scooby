@@ -1,5 +1,5 @@
-import { v4 as uuid } from 'uuid';
 import EnemyModel from '../../models/EnemyModel';
+import RoomModel from '../../models/RoomModel';
 import RoomType from "../enums/RoomType";
 import RoomInterface from "../interfaces/RoomInterface";
 import Room from "./Room";
@@ -9,40 +9,23 @@ class Tiles {
     private static roomSize: number = 40;
 
     static GetLevel(levelDesign: Room[][]) {
-        let level: RoomInterface[] = [];
+        let levels: RoomInterface[] = [];
         let enemies: { [id: string]: EnemyModel; } = {};
+        let rooms: { [id: string]: RoomModel; } = {};
 
         levelDesign.forEach((rowRoom, row) => {
             rowRoom.forEach((room, col) => {
                 if (room.getRoomType() !== RoomType.EMPTY) {
-                    enemies = Object.assign({}, enemies, {});
-                    let id = uuid();
-                    if (room.getRoomType() !== RoomType.START) {
-                        let roomInt: RoomInterface = {
-                            id,
-                            tiles: room.getTiles(this.tileSize, this.roomSize, row, col),
-                            walls: room.getWalls(this.tileSize, this.roomSize, row, col),
-                            doors: room.getDoors(this.tileSize, this.roomSize, row, col),
-                            roomCollider: [room.getRoomCollider(this.tileSize, this.roomSize, row, col)],
-                            enemies: room.getEnemies(this.tileSize, this.roomSize, row, col),
-                        };
-                        level.push(roomInt);
-                    } else {
-                        let roomInt: RoomInterface = {
-                            id,
-                            tiles: room.getTiles(this.tileSize, this.roomSize, row, col),
-                            walls: room.getWalls(this.tileSize, this.roomSize, row, col),
-                            doors: room.getDoors(this.tileSize, this.roomSize, row, col),
-                            roomCollider: [],
-                            enemies: room.getEnemies(this.tileSize, this.roomSize, row, col),
-                        };
-                        level.push(roomInt);
-                    }
+                    let { level, enemy, rooms } = room.getData(this.tileSize, this.roomSize, row, col);
+                    levels.push(level);
+                    enemies = Object.assign({}, enemies, enemy);
+                    rooms = Object.assign({}, rooms, rooms);
+
                 }
             })
         });
 
-        return { level, enemies };
+        return { levels, rooms, enemies };
     }
 };
 

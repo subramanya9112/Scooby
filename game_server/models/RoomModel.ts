@@ -9,14 +9,18 @@ class RoomModel {
     active: boolean;
     enemies: EnemyModel[];
 
-    constructor(id: string, x: number, y: number, height: number, width: number, enemies: EnemyModel[]) {
+    constructor(id: string, x: number, y: number, height: number, width: number) {
         this.id = id;
         this.x = x;
         this.y = y;
         this.height = height;
         this.width = width;
         this.active = false;
-        this.enemies = enemies;
+        this.enemies = [];
+    }
+
+    addEnemies(enemy: EnemyModel) {
+        this.enemies.push(enemy);
     }
 }
 
