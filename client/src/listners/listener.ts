@@ -48,10 +48,24 @@ class Listeners {
             this.game?.events.emit(Defaults2.SOCKET_GAME_PLAYER_BULLET_REMOVE, data);
         });
 
-        this.socket?.on(Defaults1.SERVER_GAME_ROOM_ENTERRED, () => {
-            Defaults2.SOCKET_GAME_ROOM_ENTERRED;
-            // TODO: here
-            // this.game?.events.emit(GameConst.CHANGE_SCENE, GameScene.sceneName);
+        this.socket?.on(Defaults1.SERVER_GAME_CLOSE_DOOR, () => {
+            this.game?.events.emit(Defaults2.SOCKET_GAME_CLOSE_DOOR);
+        });
+
+        this.socket?.on(Defaults1.SERVER_GAME_CHANGE_PLAYER_POSITION, (position) => {
+            this.game?.events.emit(Defaults2.SOCKET_GAME_CHANGE_PLAYER_POSITION, position);
+        });
+
+        this.socket?.on(Defaults1.SERVER_GAME_ROOM_ENTERRED, (roomId: string) => {
+            this.game?.events.emit(Defaults2.SOCKET_GAME_ROOM_ENTERRED, roomId);
+        });
+
+        this.socket?.on(Defaults1.SERVER_GAME_ENEMY_MOVE, (data: any) => {
+            this.game?.events.emit(Defaults2.SOCKET_GAME_ENEMY_MOVE, data);
+        });
+
+        this.socket?.on(Defaults1.SERVER_GAME_ENEMY_SHOOT, (data: any) => {
+            this.game?.events.emit(Defaults2.SOCKET_GAME_ENEMY_SHOOT, data);
         });
 
         this.socket?.on(Defaults1.SERVER_GAME_END_LEVEL, () => {
@@ -79,9 +93,8 @@ class Listeners {
             this.socket?.emit(Defaults1.GAME_SERVER_PLAYER_BULLET_REMOVE, data);
         });
 
-        this.game?.events.on(Defaults2.GAME_SOCKET_ROOM_ENTERRED, () => {
-            // TODO: here
-            // this.socket?.emit(Defaults1.GAME_SERVER_END_LEVEL);
+        this.game?.events.on(Defaults2.GAME_SOCKET_ROOM_ENTERRED, (roomId: string) => {
+            this.socket?.emit(Defaults1.GAME_SERVER_ROOM_ENTERRED, roomId);
         });
 
         this.game?.events.on(Defaults2.GAME_SOCKET_END_LEVEL, () => {

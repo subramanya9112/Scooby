@@ -16,7 +16,7 @@ class EnemyModel {
         this.room = room;
     }
 
-    move(players: { [id: string]: PlayerModel; }) {
+    move(players: { [id: string]: PlayerModel; }, onMove: (id: string, x: number, y: number) => void) {
         if (this.room.active) {
             let playerIdToMove = null;
             let minimumDistance = Infinity;
@@ -28,7 +28,7 @@ class EnemyModel {
                     return;
                 }
 
-                if (distance < minimumDistance) {
+                if (distance < minimumDistance && distance < 5 * 64) {
                     playerIdToMove = playerId;
                     minimumDistance = distance;
                 }
@@ -36,13 +36,14 @@ class EnemyModel {
 
             if (playerIdToMove) {
                 let angle = Math.atan2(players[playerIdToMove].y - this.y, players[playerIdToMove].x - this.x);
-                this.x = this.x + Math.cos(angle) * 64;
-                this.y = this.y + Math.sin(angle) * 64;
+                this.x = Math.ceil(this.x + Math.cos(angle) * 64);
+                this.y = Math.ceil(this.y + Math.sin(angle) * 64);
+                onMove(this.id, this.x, this.y);
             }
         }
     }
 
-    shoot(players: { [id: string]: PlayerModel; }) {
+    shoot(players: { [id: string]: PlayerModel; }, onShoot: (id: string, x: number, y: number, angle: number) => void) {
         if (this.room.active) {
             let playerIdToMove = null;
             let minimumDistance = Infinity;
@@ -58,7 +59,7 @@ class EnemyModel {
             }
             if (playerIdToMove) {
                 let angle = Math.atan2(players[playerIdToMove].y - this.y, players[playerIdToMove].x - this.x);
-                // shoot at angle
+                onShoot(this.id, this.x, this.y, angle);
             }
         }
     }

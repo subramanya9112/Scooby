@@ -62,10 +62,13 @@ io.on(Defaults.GAME_SERVER_CONNECTION, (socket) => {
         socket.emit(Defaults.SERVER_GAME_TAKE_MAP, levels);
     });
 
-    socket.on(Defaults.GAME_SERVER_ROOM_ENTERRED, (roomId) => {
+    socket.on(Defaults.GAME_SERVER_ROOM_ENTERRED, (data) => {
+        let roomId = data.roomId, playerPosition = data.playerPosition;
         if (rooms[roomId] && rooms[roomId].active === false) {
             rooms[roomId].active = true;
             socket.broadcast.emit(Defaults.SERVER_GAME_ROOM_ENTERRED, roomId);
+            io.emit(Defaults.SERVER_GAME_CLOSE_DOOR);
+            io.emit(Defaults.SERVER_GAME_CHANGE_PLAYER_POSITION, playerPosition);
         }
     });
 
@@ -77,18 +80,26 @@ io.on(Defaults.GAME_SERVER_CONNECTION, (socket) => {
 });
 
 setInterval(function () {
-    for (let room in rooms) {
-        if (rooms.room.enemies.length == 0 && rooms.room.active == true) {
-            rooms.room.active = false;
-            io.emit("openDoor", room);
+    Object.keys(rooms).forEach(roomId => {
+        if (rooms[roomId].enemies.length == 0 && rooms[roomId].active == true) {
+            rooms[roomId].active = false;
+            io.emit("openDoor");
         }
-    }
+    });
 
     for (let enemyId in enemies) {
-        enemies[enemyId].move(players);
-        enemies[enemyId].shoot(players);
+        enemies[enemyId].move(players, (id: string, x: number, y: number) => {
+            io.emit(Defaults.SERVER_GAME_ENEMY_MOVE, {
+                id, x, y
+            });
+        });
+        enemies[enemyId].shoot(players, (id: string, x: number, y: number, angle: number) => {
+            io.emit(Defaults.SERVER_GAME_ENEMY_SHOOT, {
+                id, x, y, angle
+            });
+        });
     }
-}, 1000);
+}, 1000 / 10);
 
 app.get('/status', async (req: Request, res: Response) => {
     res.send("Server is running");

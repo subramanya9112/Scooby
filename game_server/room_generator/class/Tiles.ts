@@ -14,13 +14,12 @@ class Tiles {
         let rooms: { [id: string]: RoomModel; } = {};
 
         levelDesign.forEach((rowRoom, row) => {
-            rowRoom.forEach((room, col) => {
-                if (room.getRoomType() !== RoomType.EMPTY) {
-                    let { level, enemy, rooms } = room.getData(this.tileSize, this.roomSize, row, col);
+            rowRoom.forEach((roomClass, col) => {
+                if (roomClass.getRoomType() !== RoomType.EMPTY) {
+                    let { level, enemy, room } = roomClass.getData(this.tileSize, this.roomSize, row, col);
                     levels.push(level);
                     enemies = Object.assign({}, enemies, enemy);
-                    rooms = Object.assign({}, rooms, rooms);
-
+                    rooms[room.id] = room;
                 }
             })
         });

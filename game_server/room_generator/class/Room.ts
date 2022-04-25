@@ -291,7 +291,7 @@ class Room {
 
     getRoomCollider(tileSize: number, roomSize: number, row: number, col: number): RoomColliderInterface {
         let dimension = this.getRoomDimension();
-        let roomCollider = 0.5;
+        let roomCollider = 1.1;
 
         return {
             startX: (roomSize * col + (roomSize - dimension.height) / 2 + roomCollider) * tileSize,
@@ -316,6 +316,7 @@ class Room {
             }
 
             enemies.push({
+                id: uuid(),
                 x,
                 y,
                 type: "",
@@ -347,21 +348,20 @@ class Room {
 
         let enemy: { [id: string]: EnemyModel; } = {};
         roomInt.enemies.forEach(e => {
-            id = uuid();
-            enemy[id] = new EnemyModel(
-                id,
+            enemy[e.id] = new EnemyModel(
+                e.id,
                 e.x,
                 e.y,
                 100,
                 room
             );
-            room.addEnemies(enemy[id]);
+            room.addEnemies(enemy[e.id]);
         });
 
         return {
             level: roomInt,
             enemy,
-            rooms: { id: room }
+            room,
         }
     }
 

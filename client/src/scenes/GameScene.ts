@@ -75,9 +75,9 @@ export default class GameScene extends Phaser.Scene {
                 this.roomCollider?.add(collider);
             });
 
-            room['enemies'].forEach((val: { x: number; y: number; }) => {
+            room['enemies'].forEach((val: { id: string, x: number; y: number; }) => {
                 let enemy = new Enemy(
-                    "",
+                    val.id,
                     this,
                     val.x,
                     val.y,
@@ -176,6 +176,40 @@ export default class GameScene extends Phaser.Scene {
             });
         });
 
+        this.game.events?.on(Defaults.SOCKET_GAME_ROOM_ENTERRED, (roomId: string) => {
+            this.roomCollider?.getChildren().forEach((val) => {
+                let collider = val as Collider;
+                if (collider.roomId === roomId) {
+                    collider.destroy();
+                }
+            });
+        });
+
+        this.game.events?.on(Defaults.SOCKET_GAME_CLOSE_DOOR, () => {
+            this.doorUpdate(true);
+        });
+
+        this.game.events?.on(Defaults.SOCKET_GAME_CHANGE_PLAYER_POSITION, (val: { x: number, y: number }) => {
+            if (this.player) {
+                const { x, y } = this.player;
+                this.player?.setPosition(val.x, val.y);
+                this.player.oldPosition = { x, y };
+            }
+        });
+
+        this.game.events?.on(Defaults.SOCKET_GAME_ENEMY_MOVE, (data: any) => {
+            this.enemies?.getChildren().forEach((obj) => {
+                let enemy = obj as Enemy;
+                if (enemy.id === data.id) {
+                    enemy.moveTo(data.x, data.y);
+                }
+            });
+        });
+
+        this.game.events?.on(Defaults.SOCKET_GAME_ENEMY_SHOOT, (data: any) => {
+            // this.createMapData(data);
+        });
+
         this.game.events?.on(Defaults.SOCKET_GAME_TAKE_MAP, (data: any) => {
             this.createMapData(data);
         });
@@ -201,6 +235,8 @@ export default class GameScene extends Phaser.Scene {
 
         // create enemies group
         this.enemies = this.physics.add.group();
+        this.enemies.runChildUpdate = true;
+        this.physics.add.collider(this.enemies, this.enemies);
 
         // create other player bullets group
         this.otherPlayerBullets = this.physics.add.group();
@@ -217,6 +253,11 @@ export default class GameScene extends Phaser.Scene {
         this.physics.add.collider(this.player, this.otherPlayers);
         this.physics.add.collider(this.player, this.enemies);
         this.doorCollider = this.physics.add.collider(this.player, this.doors);
+
+        this.physics.add.collider(this.enemies, this.walls);
+        this.physics.add.collider(this.enemies, this.otherPlayers);
+        this.physics.add.collider(this.enemies, this.player);
+
         this.doorCollider.active = false;
         this.physics.add.collider(this.walls, this.playerBullets, this.wallBulletCollision.bind(this));
         this.doorBulletCollider = this.physics.add.collider(this.doors, this.playerBullets, this.wallBulletCollision.bind(this));
@@ -273,22 +314,26 @@ export default class GameScene extends Phaser.Scene {
         let player = object1 as Player;
         let collider = object2 as Collider;
 
-        collider.destroy();
-        if (this.doorBulletCollider)
-            this.doorBulletCollider.active = true;
-        if (this.doorCollider)
-            this.doorCollider.active = true;
-        this.doors?.getChildren().forEach((val) => {
-            // @ts-ignore
-            val.setVisible(true);
+        this.game.events.emit(Defaults.GAME_SOCKET_ROOM_ENTERRED, {
+            roomId: collider.roomId,
+            playerPosition: {
+                x: this.player?.x,
+                y: this.player?.y
+            },
         });
-        // TODO: 
-        // this.game.events.emit("roomCollided", collider.roomId);
+        collider.destroy();
     }
 
     doorUpdate(doorOpen: boolean) {
         if (doorOpen) {
-
+            if (this.doorBulletCollider)
+                this.doorBulletCollider.active = true;
+            if (this.doorCollider)
+                this.doorCollider.active = true;
+            this.doors?.getChildren().forEach((val) => {
+                // @ts-ignore
+                val.setVisible(true);
+            });
         }
     }
 
