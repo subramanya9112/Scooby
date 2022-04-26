@@ -1,0 +1,44 @@
+\BOOKMARK [0][]{Doc-Start}{Acknowledgements}{}% 1
+\BOOKMARK [0][]{Doc-Start}{Abstract}{}% 2
+\BOOKMARK [0][]{chapter*.1}{List of Figures}{}% 3
+\BOOKMARK [0][]{chapter*.2}{List of Tables}{}% 4
+\BOOKMARK [0][]{chapter.1}{1 Introduction}{}% 5
+\BOOKMARK [1][]{section.1.1}{1.1 Background Study}{chapter.1}% 6
+\BOOKMARK [1][]{section.1.2}{1.2 Related Works}{chapter.1}% 7
+\BOOKMARK [1][]{section.1.3}{1.3 Summary of Gaps identified \(optional\)}{chapter.1}% 8
+\BOOKMARK [1][]{section.1.4}{1.4 Project Problem Statement and Objectives \(in detail\)}{chapter.1}% 9
+\BOOKMARK [1][]{section.1.5}{1.5 Organization of the Report}{chapter.1}% 10
+\BOOKMARK [0][]{chapter.2}{2 High-level Design}{}% 11
+\BOOKMARK [1][]{section.2.1}{2.1 Software development methodology}{chapter.2}% 12
+\BOOKMARK [1][]{section.2.2}{2.2 Architecture}{chapter.2}% 13
+\BOOKMARK [1][]{section.2.3}{2.3 Modules Description \(optional\)}{chapter.2}% 14
+\BOOKMARK [1][]{section.2.4}{2.4 Functional Requirements}{chapter.2}% 15
+\BOOKMARK [2][]{subsection.2.4.1}{2.4.1 Name of the function \(e.g., search Article, Remove Article, Add Record\)}{section.2.4}% 16
+\BOOKMARK [2][]{subsection.2.4.2}{2.4.2 Name of the function}{section.2.4}% 17
+\BOOKMARK [0][]{chapter.3}{3 Detailed Design}{}% 18
+\BOOKMARK [1][]{section.3.1}{3.1 Interface design}{chapter.3}% 19
+\BOOKMARK [1][]{section.3.2}{3.2 Data Structures and Algorithms}{chapter.3}% 20
+\BOOKMARK [2][]{subsection.3.2.1}{3.2.1 Function Name1}{section.3.2}% 21
+\BOOKMARK [2][]{subsection.3.2.2}{3.2.2 Function Name2}{section.3.2}% 22
+\BOOKMARK [1][]{section.3.3}{3.3 UML diagrams with discussions}{chapter.3}% 23
+\BOOKMARK [1][]{section.3.4}{3.4 Data Source/Database used and Formats}{chapter.3}% 24
+\BOOKMARK [0][]{chapter.4}{4 Implementation}{}% 25
+\BOOKMARK [1][]{section.4.1}{4.1 Tools and Technologies}{chapter.4}% 26
+\BOOKMARK [2][]{subsection.4.1.1}{4.1.1 Name1}{section.4.1}% 27
+\BOOKMARK [2][]{subsection.4.1.2}{4.1.2 Name2}{section.4.1}% 28
+\BOOKMARK [1][]{section.4.2}{4.2 Experimental Setup}{chapter.4}% 29
+\BOOKMARK [1][]{section.4.3}{4.3 Coding Standards followed}{chapter.4}% 30
+\BOOKMARK [1][]{section.4.4}{4.4 Code Integration details}{chapter.4}% 31
+\BOOKMARK [1][]{section.4.5}{4.5 Implementation work flow}{chapter.4}% 32
+\BOOKMARK [1][]{section.4.6}{4.6 Execution Results and Discussions}{chapter.4}% 33
+\BOOKMARK [1][]{section.4.7}{4.7 Non-functional requirements results}{chapter.4}% 34
+\BOOKMARK [0][]{chapter.5}{5 Testing}{}% 35
+\BOOKMARK [1][]{section.5.1}{5.1 Test workflow}{chapter.5}% 36
+\BOOKMARK [2][]{subsection.5.1.1}{5.1.1 Name of the test1}{section.5.1}% 37
+\BOOKMARK [2][]{subsection.5.1.2}{5.1.2 Name of the test2}{section.5.1}% 38
+\BOOKMARK [1][]{section.5.2}{5.2 Test case details}{chapter.5}% 39
+\BOOKMARK [2][]{subsection.5.2.1}{5.2.1 Test case id:}{section.5.2}% 40
+\BOOKMARK [2][]{subsection.5.2.2}{5.2.2 Test case id:}{section.5.2}% 41
+\BOOKMARK [0][]{chapter.6}{6 Conclusions and Future Scope}{}% 42
+\BOOKMARK [0][]{appendix.A}{A Title of Appendix-A}{}% 43
+\BOOKMARK [0][]{appendix.B}{B Title of Appendix-B}{}% 44

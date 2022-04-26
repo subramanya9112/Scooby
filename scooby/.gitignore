@@ -1,0 +1,7 @@
+/.cache
+/dist
+/node_modules
+/.DS_Store
+/.parcel-cache
+/build
+/.temp
