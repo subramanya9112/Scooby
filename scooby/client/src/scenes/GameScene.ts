@@ -54,14 +54,14 @@ export default class GameScene extends Phaser.Scene {
                     .setVisible(false);
             });
 
-            // room['walls'].forEach((val: { x: number | undefined; y: number; }) => {
-            //     this.walls?.create(val.x, val.y - 32, 'wall', 0)
-            //         .setScale(2)
-            //         .setOrigin(0, 0)
-            //         .setSize(64, 64)
-            //         .setOffset(16, 56)
-            //         .setDepth(val.y - 32);
-            // });
+            room['walls'].forEach((val: { x: number | undefined; y: number; }) => {
+                this.walls?.create(val.x, val.y - 32, 'wall', 0)
+                    .setScale(2)
+                    .setOrigin(0, 0)
+                    .setSize(64, 64)
+                    .setOffset(16, 56)
+                    .setDepth(val.y - 32);
+            });
 
             room['roomCollider'].forEach((val: { startX: number; width: number; startY: number; height: number; }) => {
                 let collider = new Collider(

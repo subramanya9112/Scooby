@@ -2,7 +2,6 @@
   "name": "scooby",
   "version": "1.0.0",
   "description": "Major Project",
-  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "docker-run": "docker-compose up",
@@ -24,6 +23,10 @@
   },
   "homepage": "https://github.com/subramanya9112/scooby#readme",
   "devDependencies": {
+    "@types/mongoose": "^5.11.97",
     "typescript": "^4.6.3"
+  },
+  "dependencies": {
+    "mongoose": "^6.3.1"
   }
 }

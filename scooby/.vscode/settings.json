@@ -5,7 +5,7 @@
         // "**/node_modules/**": true,
         "Design": true,
         "docker_manager": true,
-        "nginx": true,
+        // "nginx": true,
         "server": true,
         ".gitattributes": true,
         "project_diary.txt": true,
@@ -13,5 +13,6 @@
         // "docker-compose.yml": true,
         // "package-lock.json": true,
         // "package.json": true,
+        ".temp":true,
     }
 }
