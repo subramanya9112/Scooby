@@ -33,7 +33,7 @@ class Game extends Phaser.Game {
     globals: any;
     constructor() {
         super(config);
-        Listeners.setInstance('http://localhost', this);
+        Listeners.setInstance('http://localhost:80/', this);
         this.scene.start(BootScene.sceneName);
         this.events.on(GameConst.CHANGE_SCENE, (sceneName: string) => {
             this.scene.start(sceneName);

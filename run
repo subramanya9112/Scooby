@@ -1,0 +1,16 @@
+gcloud config set project scooby-352914
+
+docker build --no-cache -t game-server -f Dockerfile .
+docker tag game-server gcr.io/scooby-352914/game-server
+docker push gcr.io/scooby-352914/game-server
+
+gcloud run deploy --image gcr.io/scooby-352914/game-server --platform managed --region us-central1 --port 80 --allow-unauthenticated
+
+
+docker build --no-cache -t client -f Dockerfile .
+docker tag client gcr.io/scooby-352914/client
+docker push gcr.io/scooby-352914/client
+
+gcloud run deploy --image gcr.io/scooby-352914/client --platform managed --region us-central1 --port 80 --allow-unauthenticated
+
+gcloud components update

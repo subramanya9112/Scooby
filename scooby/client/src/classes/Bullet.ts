@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 
 export default class Player extends Phaser.Physics.Arcade.Image {
     id: string;
+    damage: number;
     constructor(
         id: string,
         scene: Phaser.Scene,
@@ -9,9 +10,11 @@ export default class Player extends Phaser.Physics.Arcade.Image {
         y: number,
         key: string | Phaser.Textures.Texture,
         frame: string | number | undefined,
+        damage: number,
     ) {
         super(scene, x, y, key, frame);
         this.id = id;
+        this.damage = damage;
 
         // enable physics
         this.scene.physics.world.enable(this);
@@ -29,12 +32,14 @@ export default class Player extends Phaser.Physics.Arcade.Image {
     activate(
         x: number,
         y: number,
+        damage: number
     ) {
         this.setAlpha(1);
         this.active = true;
 
         this.x = x;
         this.y = y;
+        this.damage = damage;
     }
 
     deactivate() {

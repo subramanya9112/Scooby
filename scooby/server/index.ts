@@ -1,60 +1,40 @@
 import express, { Request, Response } from 'express';
+import { OAuth2Client } from "google-auth-library";
 import Docker from 'dockerode';
 import cors from 'cors';
-import cookieSession from 'cookie-session';
 
 const app = express();
 const port = process.env.PORT || 80;
+require("dotenv").config();
 var docker = new Docker();
 
-const passport = require("passport");
-require("./passport-setup");
-
 // Connect to DB
+const oAuth2Client = new OAuth2Client({
+    clientId: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
+});
+//@ts-ignore
+mongoose.connect(process.env.MONGO_URL, {
+    //@ts-ignore
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+}).then((conn) => {
+    console.log('Connected to MongoDB');
+    console.log(`MongoDB connected: ${conn.connection.host}`)
+});
 
 // middleware
-app.use(cors({
-    origin: "*"
-}));
+app.use(cors());
 app.use(express.json());
-app.use(
-    cookieSession({
-        name: "session",
-        keys: ["key1", "key2"],
-        domain: ".localtest.me"
-    })
-);
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-// Google login
-app.get("/failure", (req, res) => {
-    // res.redirect("notlogin");
-});
-app.get("/success", (req, res) => {
-    // res.redirect("/getstarted");
-});
-
-app.get(
-    "/google",
-    passport.authenticate("google", { scope: ["profile", "email"] })
-);
-
-app.get(
-    "/google/callback",
-    passport.authenticate("google", {
-        successRedirect: "/success",
-        failureRedirect: "/failure",
-    })
-);
-
-// Logout
-app.get("/logout", (req, res) => {
-    // @ts-ignore
-    req.session = null;
-    req.logout();
-    // res.redirect("/");
+app.use(async (req, res, next) => {
+    if (req.body.cred) {
+        const ticket = await oAuth2Client.verifyIdToken({
+            idToken: req.body.cred,
+            audience: process.env.CLIENT_ID,
+        });
+        console.log(ticket.getPayload());
+    }
+    next();
 });
 
 function createRoom(roomID) {

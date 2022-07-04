@@ -5,22 +5,31 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scooby</title>
-
-    <style>
-        html,
-        body {
-            height: 100%;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            border: 0px;
-            overflow: hidden;
-        }
-    </style>
+    <title>Document</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
 <body>
+    <div id="g_id_onload" data-client_id="523567515298-v6igml1qpr0adcavnh5jvn3t0l7uf2k5.apps.googleusercontent.com"
+        data-callback="handleCredentialResponse">
+    </div>
+    <div class="g_id_signin" data-type="standard"></div>
+    <div class="g_id_signout" data-type="standard"></div>
+
+    <script>
+        function handleCredentialResponse(response) {
+            let cred = response.credential;
+            fetch("http://localhost", {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ cred })
+            }).then(response => response.json())
+                .then(response => console.log(response));
+        }
+    </script>
 </body>
 
 </html>

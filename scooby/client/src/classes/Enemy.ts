@@ -24,6 +24,7 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.setOffset(0, 31);
         // this.setPushable(false);
         this.target = new Phaser.Math.Vector2(x, y);
+        this.body.pushable = false;
     }
 
     init() {
@@ -52,5 +53,9 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.target = new Phaser.Math.Vector2(this.x, this.y);
             // this.scene.physics.moveToObject(this, this.target, 500);
         }
+    }
+
+    cleanUp() {
+        this.destroy();
     }
 }

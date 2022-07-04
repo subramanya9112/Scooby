@@ -5,6 +5,8 @@ export const GAME_SOCKET_PLAYER_BULLET_SHOOT = 'game_socket_playerBulletShoot';
 export const GAME_SOCKET_PLAYER_BULLET_REMOVE = 'game_socket_playerBulletRemove';
 export const GAME_SOCKET_ROOM_ENTERRED = 'game_socket_roomEnterred';
 export const GAME_SOCKET_END_LEVEL = 'game_socket_endLevel';
+export const GAME_SOCKET_ENEMY_TAKE_DAMAGE = 'game_socket_enemyTakeDamage';
+export const GAME_SOCKET_PLAYER_TAKE_DAMAGE = 'game_socket_playerTakeDamage';
 
 export const SOCKET_GAME_CREATE_EXISTING_PLAYERS = 'socket_game_createExistingPlayers';
 export const SOCKET_GAME_SPAWN_NEW_PLAYER = 'socket_game_spawnNewPlayer';
@@ -18,3 +20,7 @@ export const SOCKET_GAME_CHANGE_PLAYER_POSITION = 'socket_game_changePlayerPosit
 export const SOCKET_GAME_ENEMY_MOVE = 'socket_game_enemyMove';
 export const SOCKET_GAME_ENEMY_SHOOT = 'socket_game_enemyShoot';
 export const SOCKET_GAME_ROOM_ENTERRED = 'socket_game_roomEnterred';
+export const SOCKET_GAME_OPEN_DOOR = 'socket_game_openDoor';
+export const SOCKET_GAME_ENEMY_REMOVE = 'socket_game_enemyRemove';
+export const SOCKET_GAME_PLAYER_HEALTH = 'socket_game_playerHealth';
+export const SOCKET_GAME_PLAYER_XP = 'socket_game_playerXP';

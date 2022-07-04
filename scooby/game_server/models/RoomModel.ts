@@ -22,6 +22,10 @@ class RoomModel {
     addEnemies(enemy: EnemyModel) {
         this.enemies.push(enemy);
     }
+
+    remove(enemId: string) {
+        this.enemies = this.enemies.filter(enemy => enemy.id !== enemId);
+    }
 }
 
 export default RoomModel;

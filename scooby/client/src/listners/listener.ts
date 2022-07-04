@@ -31,7 +31,6 @@ class Listeners {
         });
 
         this.socket?.on(Defaults1.SERVER_GAME_TAKE_MAP, (player) => {
-            console.log(player)
             this.game?.events.emit(Defaults2.SOCKET_GAME_TAKE_MAP, player);
         });
 
@@ -68,9 +67,31 @@ class Listeners {
             this.game?.events.emit(Defaults2.SOCKET_GAME_ENEMY_SHOOT, data);
         });
 
+        this.socket?.on(Defaults1.SERVER_GAME_OPEN_DOOR, () => {
+            this.game?.events.emit(Defaults2.SOCKET_GAME_OPEN_DOOR);
+        });
+
+        this.socket?.on(Defaults1.SERVER_GAME_ENEMY_REMOVE, (data: any) => {
+            this.game?.events.emit(Defaults2.SOCKET_GAME_ENEMY_REMOVE, data);
+        });
+
+        this.socket?.on(Defaults1.SERVER_GAME_PLAYER_DIED, () => {
+            console.log("Level completed");
+            window.location.href = "https://localhost:8080/page.html";
+        });
+
+        this.socket?.on(Defaults1.SERVER_GAME_PLAYER_HEALTH, (data: any) => {
+            this.game?.events.emit(Defaults2.SOCKET_GAME_PLAYER_HEALTH, data);
+        });
+
+        this.socket?.on(Defaults1.SERVER_GAME_PLAYER_XP, (data: any) => {
+            this.game?.events.emit(Defaults2.SOCKET_GAME_PLAYER_XP, data);
+        });
+
         this.socket?.on(Defaults1.SERVER_GAME_END_LEVEL, () => {
             console.log("Level completed");
-            this.game?.events.emit(GameConst.CHANGE_SCENE, GameScene.sceneName);
+            window.location.href = "https://localhost:8080/page.html";
+            // this.game?.events.emit(GameConst.CHANGE_SCENE, GameScene.sceneName);
         });
 
         this.game?.events.on(Defaults2.GAME_SOCKET_NEW_PLAYER, (player: any) => {
@@ -91,6 +112,14 @@ class Listeners {
 
         this.game?.events.on(Defaults2.GAME_SOCKET_PLAYER_BULLET_REMOVE, (data: any) => {
             this.socket?.emit(Defaults1.GAME_SERVER_PLAYER_BULLET_REMOVE, data);
+        });
+
+        this.game?.events.on(Defaults2.GAME_SOCKET_ENEMY_TAKE_DAMAGE, (data: any) => {
+            this.socket?.emit(Defaults1.GAME_SERVER_ENEMY_TAKE_DAMAGE, data);
+        });
+
+        this.game?.events.on(Defaults2.GAME_SOCKET_PLAYER_TAKE_DAMAGE, (data: any) => {
+            this.socket?.emit(Defaults1.GAME_SERVER_PLAYER_TAKE_DAMAGE, data);
         });
 
         this.game?.events.on(Defaults2.GAME_SOCKET_ROOM_ENTERRED, (roomId: string) => {

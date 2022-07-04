@@ -352,7 +352,9 @@ class Room {
                 e.id,
                 e.x,
                 e.y,
-                100,
+                100, // TODO: based on enemy type
+                100, // TODO: based on enemy type
+                "100", // TODO: based on character type
                 room
             );
             room.addEnemies(enemy[e.id]);

@@ -8,6 +8,8 @@ import * as Defaults from './../../../shared/SOCKET_GAME_CONSTANT';
 
 export default class GameScene extends Phaser.Scene {
     public static sceneName = 'GameScene';
+    playerHealth: number;
+    playerXP: number;
     player: Player | undefined;
     walls: Phaser.Physics.Arcade.StaticGroup | undefined;
     otherPlayers: Phaser.Physics.Arcade.Group | undefined;
@@ -15,12 +17,16 @@ export default class GameScene extends Phaser.Scene {
     enemies: Phaser.Physics.Arcade.Group | undefined;
     playerBullets: Phaser.Physics.Arcade.Group | undefined;
     otherPlayerBullets: Phaser.Physics.Arcade.Group | undefined;
+    enemyBullets: Phaser.Physics.Arcade.Group | undefined;
     doors: Phaser.Physics.Arcade.Group | undefined;
     doorCollider: Phaser.Physics.Arcade.Collider | undefined;
-    doorBulletCollider: Phaser.Physics.Arcade.Collider | undefined;
+    doorPlayerBulletCollider: Phaser.Physics.Arcade.Collider | undefined;
+    doorEnemyBulletCollider: Phaser.Physics.Arcade.Collider | undefined;
 
     constructor() {
         super(GameScene.sceneName);
+        this.playerHealth = 0;
+        this.playerXP = 0;
     }
 
     init() {
@@ -146,12 +152,15 @@ export default class GameScene extends Phaser.Scene {
             if (this.otherPlayerBullets) {
                 let bullet = this.otherPlayerBullets.getFirstDead();
                 if (bullet) {
+                    // TODO:
                     bullet.activate(
                         data.x,
                         data.y,
+                        10,
                     );
                     bullet.id = data.id;
                 } else {
+                    // TODO:
                     bullet = new Bullet(
                         data.id,
                         this,
@@ -159,6 +168,7 @@ export default class GameScene extends Phaser.Scene {
                         data.y,
                         'shot',
                         undefined,
+                        10,
                     );
                 }
                 this.otherPlayerBullets.add(bullet);
@@ -189,6 +199,10 @@ export default class GameScene extends Phaser.Scene {
             this.doorUpdate(true);
         });
 
+        this.game.events?.on(Defaults.SOCKET_GAME_OPEN_DOOR, () => {
+            this.doorUpdate(false);
+        });
+
         this.game.events?.on(Defaults.SOCKET_GAME_CHANGE_PLAYER_POSITION, (val: { x: number, y: number }) => {
             if (this.player) {
                 const { x, y } = this.player;
@@ -207,11 +221,53 @@ export default class GameScene extends Phaser.Scene {
         });
 
         this.game.events?.on(Defaults.SOCKET_GAME_ENEMY_SHOOT, (data: any) => {
-            // this.createMapData(data);
+            if (this.enemyBullets) {
+                let bullet = this.enemyBullets.getFirstDead();
+                if (bullet) {
+                    // TODO
+                    bullet.activate(
+                        data.x,
+                        data.y,
+                        10,
+                    );
+                    bullet.id = data.id;
+                } else {
+                    // TODO
+                    bullet = new Bullet(
+                        data.id,
+                        this,
+                        data.x,
+                        data.y,
+                        'shot',
+                        undefined,
+                        10,
+                    );
+                }
+                this.enemyBullets.add(bullet);
+                bullet.init(data.angle);
+            }
         });
 
         this.game.events?.on(Defaults.SOCKET_GAME_TAKE_MAP, (data: any) => {
             this.createMapData(data);
+        });
+
+        this.game.events?.on(Defaults.SOCKET_GAME_PLAYER_HEALTH, (data: any) => {
+            console.log(data.health);
+            this.playerHealth = data.health;
+        });
+
+        this.game.events?.on(Defaults.SOCKET_GAME_PLAYER_XP, (data: any) => {
+            this.playerXP = data.xp;
+        });
+
+        this.game.events?.on(Defaults.SOCKET_GAME_ENEMY_REMOVE, (data: any) => {
+            this.enemies?.getChildren().forEach((val) => {
+                let bullet = val as Enemy;
+                if (bullet.id === data.enemyId) {
+                    bullet.cleanUp();
+                }
+            });
         });
     }
 
@@ -249,29 +305,43 @@ export default class GameScene extends Phaser.Scene {
             if (pointer.button == 0)
                 this.shoot(pointer.x, pointer.y);
         });
+        this.enemyBullets = this.physics.add.group();
 
         this.physics.add.overlap(this.player, this.roomCollider, this.roomCollision.bind(this));
         this.physics.add.collider(this.player, this.walls);
         this.physics.add.collider(this.player, this.otherPlayers);
         this.physics.add.collider(this.player, this.enemies);
+        this.physics.add.collider(this.player, this.enemyBullets, this.playerEnemyBulletCollision.bind(this));
         this.doorCollider = this.physics.add.collider(this.player, this.doors);
 
         this.physics.add.collider(this.enemies, this.walls);
         this.physics.add.collider(this.enemies, this.otherPlayers);
         this.physics.add.collider(this.enemies, this.player);
+        this.physics.add.collider(this.enemies, this.playerBullets, this.enemyPlayerBulletCollision.bind(this));
+        this.physics.add.collider(this.enemies, this.otherPlayerBullets);
 
         this.doorCollider.active = false;
-        this.physics.add.collider(this.walls, this.playerBullets, this.wallBulletCollision.bind(this));
-        this.doorBulletCollider = this.physics.add.collider(this.doors, this.playerBullets, this.wallBulletCollision.bind(this));
-        this.doorBulletCollider.active = false;
+        this.physics.add.collider(this.walls, this.playerBullets, this.wallPlayerBulletCollision.bind(this));
+        this.physics.add.collider(this.walls, this.enemyBullets, this.wallEnemyBulletCollision.bind(this));
+        this.doorPlayerBulletCollider = this.physics.add.collider(this.doors, this.playerBullets, this.wallPlayerBulletCollision.bind(this));
+        this.doorPlayerBulletCollider.active = false;
+        this.doorEnemyBulletCollider = this.physics.add.collider(this.doors, this.playerBullets, this.wallEnemyBulletCollision.bind(this));
+        this.doorEnemyBulletCollider.active = false;
 
         this.game.events.emit(Defaults.GAME_SOCKET_GIVE_MAP);
     }
 
-    wallBulletCollision(wall: Phaser.GameObjects.GameObject, bullet: Phaser.GameObjects.GameObject) {
-        this.game.events.emit(Defaults.GAME_SOCKET_PLAYER_BULLET_REMOVE, {
-            id: (bullet as Bullet).id
-        });
+    wallPlayerBulletCollision(object1: Phaser.GameObjects.GameObject, object2: Phaser.GameObjects.GameObject) {
+        let bullet = object2 as Bullet;
+        if (bullet.active) {
+            this.game.events.emit(Defaults.GAME_SOCKET_PLAYER_BULLET_REMOVE, {
+                id: bullet.id
+            });
+            bullet.deactivate();
+        }
+    }
+
+    wallEnemyBulletCollision(wall: Phaser.GameObjects.GameObject, bullet: Phaser.GameObjects.GameObject) {
         (bullet as Bullet).deactivate();
     }
 
@@ -287,11 +357,14 @@ export default class GameScene extends Phaser.Scene {
 
             let bullet = this.playerBullets.getFirstDead();
             if (bullet) {
+                // TODO
                 bullet.activate(
                     this.player.x,
                     this.player.y,
+                    10,
                 );
             } else {
+                // TODO
                 bullet = new Bullet(
                     Listeners.getInstance().getBulletUniqueID(),
                     this,
@@ -299,6 +372,7 @@ export default class GameScene extends Phaser.Scene {
                     this.player.y,
                     'shot',
                     undefined,
+                    10,
                 );
             }
             this.playerBullets.add(bullet);
@@ -327,15 +401,35 @@ export default class GameScene extends Phaser.Scene {
     }
 
     doorUpdate(doorOpen: boolean) {
-        if (doorOpen) {
-            if (this.doorBulletCollider)
-                this.doorBulletCollider.active = true;
-            if (this.doorCollider)
-                this.doorCollider.active = true;
-            this.doors?.getChildren().forEach((val) => {
-                // @ts-ignore
-                val.setVisible(true);
-            });
+        if (this.doorPlayerBulletCollider)
+            this.doorPlayerBulletCollider.active = doorOpen;
+        if (this.doorEnemyBulletCollider)
+            this.doorEnemyBulletCollider.active = doorOpen;
+        if (this.doorCollider)
+            this.doorCollider.active = doorOpen;
+        this.doors?.getChildren().forEach((val) => {
+            // @ts-ignore
+            val.setVisible(doorOpen);
+        });
+    }
+
+    playerEnemyBulletCollision(object1: Phaser.GameObjects.GameObject, object2: Phaser.GameObjects.GameObject) {
+        let player = object1 as Player;
+        let bullet = object2 as Bullet;
+
+        if (bullet.active) {
+            this.game.events.emit(Defaults.GAME_SOCKET_PLAYER_TAKE_DAMAGE, { damage: bullet.damage });
+            bullet.deactivate();
+        }
+    }
+
+    enemyPlayerBulletCollision(object1: Phaser.GameObjects.GameObject, object2: Phaser.GameObjects.GameObject) {
+        let enemy = object1 as Enemy;
+        let bullet = object2 as Bullet;
+
+        if (bullet.active) {
+            this.game.events.emit(Defaults.GAME_SOCKET_ENEMY_TAKE_DAMAGE, { enemyId: enemy.id, damage: bullet.damage });
+            bullet.deactivate();
         }
     }
 

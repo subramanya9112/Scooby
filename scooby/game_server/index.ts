@@ -1,5 +1,7 @@
 import express, { Request, Response } from 'express';
-
+import cors from "cors";
+import { OAuth2Client } from "google-auth-library";
+import mongoose from 'mongoose';
 const app = express();
 const port = process.env.PORT || 80;
 import { createServer } from 'http';
@@ -8,11 +10,36 @@ import PlayerModel from './models/PlayerModel';
 import Level from './room_generator/class/Level';
 import Tiles from './room_generator/class/Tiles';
 import * as Defaults from '../shared/SERVER_GAME_CONSTANT';
+require("dotenv").config();
 
 const server = createServer(app);
 const io = new Server(server);
+const oAuth2Client = new OAuth2Client({
+    clientId: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
+});
+//@ts-ignore
+mongoose.connect(process.env.MONGO_URL, {
+    //@ts-ignore
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+}).then((conn) => {
+    console.log('Connected to MongoDB');
+    console.log(`MongoDB connected: ${conn.connection.host}`)
+});
 
+app.use(cors());
 app.use(express.json());
+app.use(async (req, res, next) => {
+    if (req.body.cred) {
+        const ticket = await oAuth2Client.verifyIdToken({
+            idToken: req.body.cred,
+            audience: process.env.CLIENT_ID,
+        });
+        console.log(ticket.getPayload());
+    }
+    next();
+});
 
 let players: { [id: string]: PlayerModel; } = {};
 let { levels, rooms, enemies } = Tiles.GetLevel(Level.GetLevel(1));
@@ -24,21 +51,36 @@ io.on(Defaults.GAME_SERVER_CONNECTION, (socket) => {
     socket.on(Defaults.GAME_SERVER_DISCONNECT, () => {
         console.log('a user disconnected');
 
-        // delete user data from the server
-        delete players[socket.id];
+        if (players[socket.id]) {
+            players[socket.id].saveToDatabase();
+            delete players[socket.id];
+        }
+
+        // if no user is present, stop the machine
+        // if (Object.keys(players).length === 0) {
+        //     console.log('No user is present');
+        //     process.exit(0);
+        // }
 
         // emit a message to all players to remove this player
         io.emit(Defaults.SERVER_GAME_REMOVE_PLAYER, socket.id);
     });
 
     socket.on(Defaults.GAME_SERVER_NEW_PLAYER, ({ x, y }) => {
-        players[socket.id] = new PlayerModel(socket.id, x, y);
+        // TODO: Change this
+        players[socket.id] = new PlayerModel("token", 100, socket.id, x, y, "character");
 
         // inform the other players of the new player that joined
         socket.broadcast.emit(Defaults.SERVER_GAME_SPAWN_NEW_PLAYER, players[socket.id]);
 
         // inform the new player of the other players
         socket.emit(Defaults.SERVER_GAME_CREATE_EXISTING_PLAYERS, players);
+
+        // inform of health
+        socket.emit(Defaults.SERVER_GAME_PLAYER_HEALTH, { health: players[socket.id].health });
+
+        // inform of xp
+        socket.emit(Defaults.SERVER_GAME_PLAYER_XP, { xp: players[socket.id].xp });
     });
 
     socket.on(Defaults.GAME_SERVER_PLAYER_MOVED, (playerData) => {
@@ -58,24 +100,58 @@ io.on(Defaults.GAME_SERVER_CONNECTION, (socket) => {
         socket.broadcast.emit(Defaults.SERVER_GAME_PLAYER_BULLET_REMOVE, data);
     });
 
+    socket.on(Defaults.GAME_SERVER_ENEMY_TAKE_DAMAGE, ({ enemyId, damage }) => {
+        if (enemies[enemyId]) {
+            if (enemies[enemyId].takeDamage(damage)) {
+                players[socket.id].increaseXP(enemies[enemyId].xp);
+                socket.emit(Defaults.SERVER_GAME_PLAYER_XP, { xp: players[socket.id].xp });
+                io.emit(Defaults.SERVER_GAME_ENEMY_REMOVE, { enemyId });
+                enemies[enemyId].room.remove(enemyId);
+                delete enemies[enemyId];
+            }
+        }
+    });
+
+    socket.on(Defaults.GAME_SERVER_PLAYER_TAKE_DAMAGE, ({ damage }) => {
+        if (players[socket.id]) {
+            if (players[socket.id].decreaseHealth(damage)) {
+                socket.emit(Defaults.SERVER_GAME_PLAYER_HEALTH, { health: players[socket.id].health });
+                players[socket.id].saveToDatabase();
+                socket.emit(Defaults.SERVER_GAME_PLAYER_DIED, {});
+                delete players[socket.id];
+                socket.disconnect();
+            } else {
+                socket.emit(Defaults.SERVER_GAME_PLAYER_HEALTH, { health: players[socket.id].health });
+            }
+        }
+    });
+
     socket.on(Defaults.GAME_SERVER_GIVE_MAP, () => {
         socket.emit(Defaults.SERVER_GAME_TAKE_MAP, levels);
     });
 
     socket.on(Defaults.GAME_SERVER_ROOM_ENTERRED, (data) => {
         let roomId = data.roomId, playerPosition = data.playerPosition;
-        if (rooms[roomId] && rooms[roomId].active === false) {
-            rooms[roomId].active = true;
-            socket.broadcast.emit(Defaults.SERVER_GAME_ROOM_ENTERRED, roomId);
-            io.emit(Defaults.SERVER_GAME_CLOSE_DOOR);
-            io.emit(Defaults.SERVER_GAME_CHANGE_PLAYER_POSITION, playerPosition);
+        if (rooms[roomId]) {
+            if (rooms[roomId].active === false) {
+                rooms[roomId].active = true;
+                socket.broadcast.emit(Defaults.SERVER_GAME_ROOM_ENTERRED, roomId);
+                io.emit(Defaults.SERVER_GAME_CLOSE_DOOR);
+                io.emit(Defaults.SERVER_GAME_CHANGE_PLAYER_POSITION, playerPosition);
+            } else {
+                socket.send(Defaults.SERVER_GAME_ROOM_ENTERRED, roomId);
+                socket.send(Defaults.SERVER_GAME_CLOSE_DOOR);
+            }
         }
     });
 
     socket.on(Defaults.GAME_SERVER_END_LEVEL, () => {
-        let data = Tiles.GetLevel(Level.GetLevel(1));
-        levels = data.levels, enemies = data.enemies, rooms = data.rooms;
         io.emit(Defaults.SERVER_GAME_END_LEVEL);
+
+        for (let playerId in players) {
+            players[playerId].saveToDatabase();
+        }
+        process.exit(0);
     });
 });
 
@@ -83,7 +159,7 @@ setInterval(function () {
     Object.keys(rooms).forEach(roomId => {
         if (rooms[roomId].enemies.length == 0 && rooms[roomId].active == true) {
             rooms[roomId].active = false;
-            io.emit("openDoor");
+            io.emit(Defaults.SERVER_GAME_OPEN_DOOR);
         }
     });
 
@@ -103,6 +179,12 @@ setInterval(function () {
 
 app.get('/status', async (req: Request, res: Response) => {
     res.send("Server is running");
+});
+
+app.get('/refresh', (req: Request, res: Response) => {
+    let data = Tiles.GetLevel(Level.GetLevel(1));
+    levels = data.levels, enemies = data.enemies, rooms = data.rooms;
+    res.send("Changed the data")
 });
 
 server.listen(port, () => {

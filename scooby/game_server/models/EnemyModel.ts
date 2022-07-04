@@ -6,14 +6,22 @@ class EnemyModel {
     x: number;
     y: number;
     health: number;
+    xp: number;
+    character: string;
     room: RoomModel;
+    shootTime: number;
+    shootInterval: number;
 
-    constructor(id: string, x: number, y: number, health: number, room: RoomModel) {
+    constructor(id: string, x: number, y: number, health: number, xp: number, character: string, room: RoomModel) {
         this.id = id;
         this.x = x;
         this.y = y;
         this.health = health;
         this.room = room;
+        this.xp = xp;
+        this.character = character;
+        this.shootTime = 0;
+        this.shootInterval = 10;
     }
 
     move(players: { [id: string]: PlayerModel; }, onMove: (id: string, x: number, y: number) => void) {
@@ -45,8 +53,13 @@ class EnemyModel {
 
     shoot(players: { [id: string]: PlayerModel; }, onShoot: (id: string, x: number, y: number, angle: number) => void) {
         if (this.room.active) {
+            if (this.shootTime != 0) {
+                this.shootTime = Math.max(this.shootTime - 1, 0);
+                return;
+            }
+            this.shootTime = this.shootInterval;
             let playerIdToMove = null;
-            let minimumDistance = Infinity;
+            let minimumDistance = 5 * 64;
 
             for (let playerId in players) {
                 let player = players[playerId];
@@ -64,10 +77,16 @@ class EnemyModel {
         }
     }
 
-    takeDamage(damageAmount: number) {
+    takeDamage(damageAmount: number): boolean {
         if (this.room.active) {
             this.health -= damageAmount;
+
+            if (this.health <= 0) {
+                return true;
+            }
+            return false;
         }
+        return false;
     }
 }
 
