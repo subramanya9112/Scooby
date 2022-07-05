@@ -151,74 +151,74 @@ export default class GameData {
                 {
                     "name": "Battery",
                     "path": "Battery.png",
-                    "health": 10,
-                    "damage": 5,
-                    "shootInterval": 10,
-                    "xp": 100
+                    "health": 4,
+                    "damage": 6,
+                    "shootInterval": 180,
+                    "xp": 50
                 },
                 {
                     "name": "BigSoldier",
                     "path": "BigSoldier.png",
                     "health": 10,
-                    "damage": 5,
-                    "shootInterval": 10,
-                    "xp": 100
+                    "damage": 15,
+                    "shootInterval": 60,
+                    "xp": 200
                 },
                 {
                     "name": "EliteKnightRifle",
                     "path": "EliteKnightRifle.png",
-                    "health": 10,
-                    "damage": 5,
-                    "shootInterval": 10,
-                    "xp": 100
+                    "health": 9,
+                    "damage": 14,
+                    "shootInterval": 80,
+                    "xp": 180
                 },
                 {
                     "name": "EliteKnightSword",
                     "path": "EliteKnightSword.png",
-                    "health": 10,
-                    "damage": 5,
-                    "shootInterval": 10,
-                    "xp": 100
+                    "health": 8,
+                    "damage": 12,
+                    "shootInterval": 100,
+                    "xp": 150
                 },
                 {
                     "name": "KnightPistol",
                     "path": "KnightPistol.png",
-                    "health": 10,
-                    "damage": 5,
-                    "shootInterval": 10,
-                    "xp": 100
+                    "health": 5,
+                    "damage": 8,
+                    "shootInterval": 160,
+                    "xp": 80
                 },
                 {
                     "name": "KnightSMG",
                     "path": "KnightSMG.png",
-                    "health": 10,
-                    "damage": 5,
-                    "shootInterval": 10,
+                    "health": 6,
+                    "damage": 10,
+                    "shootInterval": 140,
                     "xp": 100
                 },
                 {
                     "name": "Wizard",
                     "path": "Wizard-1.png",
-                    "health": 10,
-                    "damage": 5,
-                    "shootInterval": 10,
-                    "xp": 100
+                    "health": 2,
+                    "damage": 4,
+                    "shootInterval": 200,
+                    "xp": 20
                 }
             ],
             "forest": [
                 {
                     "name": "BowingGoblinGuard",
                     "path": "BowingGoblinGuard.png",
-                    "health": 10,
-                    "damage": 5,
-                    "shootInterval": 10,
-                    "xp": 100
+                    "health": 2,
+                    "damage": 4,
+                    "shootInterval": 200,
+                    "xp": 20
                 },
                 {
                     "name": "Elite_Goblin_Archer",
                     "path": "Elite_Goblin_Archer.png",
-                    "health": 10,
-                    "damage": 5,
+                    "health": 8,
+                    "damage": 12,
                     "shootInterval": 10,
                     "xp": 100
                 },
@@ -226,40 +226,40 @@ export default class GameData {
                     "name": "Fire_Goblin_Priest",
                     "path": "Fire_Goblin_Priest.png",
                     "health": 10,
-                    "damage": 5,
-                    "shootInterval": 10,
-                    "xp": 100
+                    "damage": 15,
+                    "shootInterval": 60,
+                    "xp": 200
                 },
                 {
                     "name": "GoblinShaman",
                     "path": "GoblinShaman.png",
-                    "health": 10,
-                    "damage": 5,
-                    "shootInterval": 10,
-                    "xp": 100
+                    "health": 9,
+                    "damage": 14,
+                    "shootInterval": 80,
+                    "xp": 180
                 },
                 {
                     "name": "GuardPistol",
                     "path": "GuardPistol.png",
-                    "health": 10,
-                    "damage": 5,
-                    "shootInterval": 10,
-                    "xp": 100
+                    "health": 5,
+                    "damage": 8,
+                    "shootInterval": 160,
+                    "xp": 80
                 },
                 {
                     "name": "GuardSpear",
                     "path": "GuardSpear.png",
-                    "health": 10,
-                    "damage": 5,
-                    "shootInterval": 10,
-                    "xp": 100
+                    "health": 4,
+                    "damage": 6,
+                    "shootInterval": 180,
+                    "xp": 50
                 },
                 {
                     "name": "ShotguningEliteGoblinGuard",
                     "path": "ShotguningEliteGoblinGuard.png",
-                    "health": 10,
-                    "damage": 5,
-                    "shootInterval": 10,
+                    "health": 6,
+                    "damage": 10,
+                    "shootInterval": 140,
                     "xp": 100
                 }
             ],
@@ -267,58 +267,58 @@ export default class GameData {
                 {
                     "name": "EliteMinerHeavy",
                     "path": "EliteMinerHeavy.png",
-                    "health": 10,
-                    "damage": 5,
-                    "shootInterval": 10,
-                    "xp": 100
+                    "health": 9,
+                    "damage": 14,
+                    "shootInterval": 80,
+                    "xp": 180
                 },
                 {
                     "name": "EliteMinerRifle",
                     "path": "EliteMinerRifle.png",
-                    "health": 10,
-                    "damage": 5,
-                    "shootInterval": 10,
+                    "health": 6,
+                    "damage": 10,
+                    "shootInterval": 140,
                     "xp": 100
                 },
                 {
                     "name": "EliteMinerShotgun",
                     "path": "EliteMinerShotgun.png",
-                    "health": 10,
-                    "damage": 5,
-                    "shootInterval": 10,
-                    "xp": 100
+                    "health": 8,
+                    "damage": 12,
+                    "shootInterval": 100,
+                    "xp": 150
                 },
                 {
                     "name": "MinerDrill",
                     "path": "MinerDrill.png",
-                    "health": 10,
-                    "damage": 5,
-                    "shootInterval": 10,
-                    "xp": 100
+                    "health": 4,
+                    "damage": 6,
+                    "shootInterval": 180,
+                    "xp": 50
                 },
                 {
                     "name": "MinerHeavy",
                     "path": "MinerHeavy.png",
-                    "health": 10,
-                    "damage": 5,
-                    "shootInterval": 10,
-                    "xp": 100
+                    "health": 5,
+                    "damage": 8,
+                    "shootInterval": 160,
+                    "xp": 80
                 },
                 {
                     "name": "MinerPickaxe",
                     "path": "MinerPickaxe.png",
-                    "health": 10,
-                    "damage": 5,
-                    "shootInterval": 10,
-                    "xp": 100
+                    "health": 2,
+                    "damage": 4,
+                    "shootInterval": 200,
+                    "xp": 20
                 },
                 {
                     "name": "Mining_Electrician",
                     "path": "Mining_Electrician.png",
                     "health": 10,
-                    "damage": 5,
-                    "shootInterval": 10,
-                    "xp": 100
+                    "damage": 15,
+                    "shootInterval": 60,
+                    "xp": 200
                 }
             ]
         }

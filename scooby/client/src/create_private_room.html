@@ -143,7 +143,7 @@
             document.getElementsByClassName("create-private-room-submit-button")[0].addEventListener("click", async () => {
                 let name = document.getElementById("inputId").value;
                 let password = document.getElementById("inputPassword").value;
-                let res = await fetch("http://localhost:80/createRoom", {
+                let res = await fetch("http://server.localtest.me/createRoom", {
                     method: "POST",
                     headers: {
                         'Accept': 'application/json',

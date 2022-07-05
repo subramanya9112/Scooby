@@ -35,8 +35,8 @@ class Game extends Phaser.Game {
         super(config);
         // @ts-ignore
         let params = (new URL(document.location)).searchParams;
-        let token = params.get("id");
-        Listeners.setInstance(`http://localhost:80/`, this);
+        let id = params.get("id");
+        Listeners.setInstance(`http://${id}.localtest.me/`, this);
         this.scene.start(BootScene.sceneName);
         this.events.on(GameConst.CHANGE_SCENE, (sceneName: string) => {
             this.scene.start(sceneName);

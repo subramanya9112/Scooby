@@ -62,10 +62,10 @@ io.on(Defaults.GAME_SERVER_CONNECTION, (socket) => {
         }
 
         // if no user is present, stop the machine
-        // if (Object.keys(players).length === 0) {
-        //     console.log('No user is present');
-        //     process.exit(0);
-        // }
+        if (Object.keys(players).length === 0) {
+            console.log('No user is present');
+            process.exit(0);
+        }
 
         // emit a message to all players to remove this player
         io.emit(Defaults.SERVER_GAME_REMOVE_PLAYER, socket.id);
@@ -171,6 +171,7 @@ io.on(Defaults.GAME_SERVER_CONNECTION, (socket) => {
             } else {
                 socket.send(Defaults.SERVER_GAME_ROOM_ENTERRED, roomId);
                 socket.send(Defaults.SERVER_GAME_CLOSE_DOOR);
+                console.log("send")
             }
         }
     });

@@ -71,6 +71,9 @@ app.use(async (req, res, next) => {
 });
 
 function createRoom(roomID: string, user: any, privateRoom: boolean, password: string) {
+    let env = [`name=${roomID}`]
+    if (password)
+        env = [`name=${roomID}`, `password=${password}`]
     docker.createContainer({
         Image: 'ubuntu',
         name: roomID,

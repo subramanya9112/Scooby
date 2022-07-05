@@ -22,6 +22,7 @@ export default class Player extends Phaser.Physics.Arcade.Image {
         this.scene.add.existing(this);
 
         this.body.setSize(20, 20, true);
+        this.setDepth(this.y);
     }
 
     init(rotation: number) {
