@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCOOBY</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        body {
+            background-color: #f2f2f2;
+            font-family: "Calligraffitti", cursive;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .join-room-content {
+            padding: 50px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .join-public-room-list {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .join-public-room-list-item {
+            border: 3px solid black;
+            width: 80%;
+            height: 80px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .join-public-room-list-item:hover {
+            background-color: #ffffff;
+        }
+
+        .join-public-room-id-list {
+            font-size: 20px;
+        }
+
+        .join-public-room-created-by-list {
+            font-size: 16px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="header">
+        <div class="linklist">
+            <div class="title">SCOOBY</div>
+            <ul class="nav-links">
+                <li class="listitem hover-underline-animation"><a href="index.html">Home</a></li>
+                <li class="listitem hover-underline-animation"><a href="customize.html">Customize</a></li>
+                <li class="listitem hover-underline-animation"><a href="join_room.html">Join Room</a></li>
+                <li class="listitem hover-underline-animation"><a href="create_room.html">Create Room</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="join-room-content">
+        <div class="join-public-room-list">
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', async function () {
+            let cred = window.localStorage.getItem('credential');
+            if (cred == null) {
+                window.location.href = './index.html';
+            }
+
+            let res = await fetch("http://localhost:80/getRooms", {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ cred }),
+            });
+            res = await res.json();
+
+            let main = document.getElementsByClassName('join-public-room-list')[0];
+            res.rooms.forEach(room => {
+                let div = document.createElement('div');
+                div.className = 'join-public-room-list-item';
+                div.innerHTML += `<div class="join-public-room-id-list">Room id: ${room.id}</div>
+                <div class="join-public-room-created-by-list">Created at: ${(new Date(room.date)).toLocaleString()}</div>`;
+                div.addEventListener('click', () => {
+                    window.location.href = `./game.html?id=${room.id}`;
+                });
+                main.appendChild(div);
+            });
+        });
+    </script>
+</body>
+
+</html>

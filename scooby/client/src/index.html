@@ -5,23 +5,94 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scooby</title>
-
-    <style>
-        html,
-        body {
-            height: 100%;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            border: 0px;
-            overflow: hidden;
-        }
-    </style>
+    <title>SCOOBY</title>
+    <link rel="stylesheet" href="./style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://pngtree.com/freepng/awesome-typography-t-shirt-design_5332714.html">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
 <body>
-    <script src="index.ts"></script>
+    <div id="g_id_onload" data-client_id="523567515298-v6igml1qpr0adcavnh5jvn3t0l7uf2k5.apps.googleusercontent.com"
+        data-callback="handleCredentialResponse">
+    </div>
+    <div class="header">
+        <div class="linklist">
+            <div class="title">SCOOBY</div>
+            <ul class="nav-links">
+                <li class="listitem hover-underline-animation"><a href="index.html">Home</a></li>
+                <li class="listitem hover-underline-animation"><a href="customize.html">Customize</a></li>
+                <li class="listitem hover-underline-animation"><a href="join_room.html">Join Room</a></li>
+                <li class="listitem hover-underline-animation"><a href="create_room.html">Create Room</a></li>
+            </ul>
+            <div class="g_id_signin" data-type="standard"></div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="wrapper">
+            <img src="assets/4.jpg" alt="img" class="img1">
+            <div class="container">
+                <h1>SCOOBY</h1>
+                <p class="lorem">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+            </div>
+        </div>
+
+        <div class="wrapper">
+            <img src="assets/5.jpg" alt="img" class="img1">
+            <div class="diffContainer">
+                <div class="subtitle">Who we are to</div>
+                <p class="lorem">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+            </div>
+        </div>
+
+        <div class="wrapper">
+            <img src="assets/6.jpg" alt="img" class="img1">
+            <div class="diffContainer">
+                <div class="subtitle">Who we are to</div>
+                <p class="lorem">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+            </div>
+        </div>
+
+        <div class="wrapper">
+            <img src="assets/3.jpg" alt="img" class="img1">
+            <div class="diffContainer">
+                <div class="subtitle">Who we are to</div>
+                <p class="lorem">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="linklist">
+            <div class="footerTitle">SCOOBY</div>
+            <ul class="nav-links">
+                <li class="listitem">Home</li>
+                <li class="listitem">Customize</li>
+                <li class="listitem">Join Room</li>
+                <li class="listitem">Create Room</li>
+            </ul>
+        </div>
+        <div class="linklist">
+            <div class="copyright">&#169; SCOOBY. Privacy policy</div>
+            <ul class="nav-links">
+                <li class="list-item-decoration"><i class="fa fa-github fa_custom fa-3x"></i></li>
+                <li class="list-item-decoration"><i class="fa fa-linkedin-square fa_custom fa-3x"></i></li>
+                <li class="list-item-decoration"><i class="fa fa-instagram fa_custom fa-3x"></i></li>
+                <li class="list-item-decoration"><i class="fa fa-youtube-square fa_custom fa-3x"></i></li>
+                <li class="list-item-decoration"><i class="fa fa-twitter-square fa_custom fa-3x"></i></li>
+
+            </ul>
+        </div>
+
+    </div>
+
+    <script>
+        function handleCredentialResponse(response) {
+            window.localStorage.setItem('credential', response.credential);
+        }
+    </script>
 </body>
 
 </html>

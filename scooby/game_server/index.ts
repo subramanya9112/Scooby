@@ -9,7 +9,8 @@ import { Server } from 'socket.io';
 import PlayerModel from './models/PlayerModel';
 import Level from './room_generator/class/Level';
 import Tiles from './room_generator/class/Tiles';
-import * as Defaults from '../shared/SERVER_GAME_CONSTANT';
+import * as Defaults from './shared/SERVER_GAME_CONSTANT';
+import Room from './database/room';
 require("dotenv").config();
 
 const server = createServer(app);
@@ -32,11 +33,15 @@ app.use(cors());
 app.use(express.json());
 app.use(async (req, res, next) => {
     if (req.body.cred) {
-        const ticket = await oAuth2Client.verifyIdToken({
-            idToken: req.body.cred,
-            audience: process.env.CLIENT_ID,
-        });
-        console.log(ticket.getPayload());
+        try {
+            const ticket = await oAuth2Client.verifyIdToken({
+                idToken: req.body.cred,
+                audience: process.env.CLIENT_ID,
+            });
+        } catch (e) {
+            console.log(e);
+        }
+        // console.log(ticket.getPayload());
     }
     next();
 });
@@ -66,9 +71,31 @@ io.on(Defaults.GAME_SERVER_CONNECTION, (socket) => {
         io.emit(Defaults.SERVER_GAME_REMOVE_PLAYER, socket.id);
     });
 
-    socket.on(Defaults.GAME_SERVER_NEW_PLAYER, ({ x, y }) => {
-        // TODO: Change this
-        players[socket.id] = new PlayerModel("token", 100, socket.id, x, y, "character");
+    socket.on(Defaults.GAME_SERVER_NEW_PLAYER, async ({ x, y, cred, character, password }) => {
+        if (process.env.password) {
+            if (process.env.password !== password) {
+                socket.emit(Defaults.SERVER_GAME_END_LEVEL);
+                socket.disconnect();
+                return;
+            }
+        }
+        let ticket;
+        try {
+            ticket = await oAuth2Client.verifyIdToken({
+                idToken: cred,
+                audience: process.env.CLIENT_ID,
+            });
+        } catch (e) {
+            socket.emit(Defaults.SERVER_GAME_END_LEVEL);
+            socket.disconnect();
+            return;
+        }
+        let email = ticket.getPayload()?.email;
+        if (!email) {
+            socket.disconnect()
+            return;
+        }
+        players[socket.id] = new PlayerModel(email, 100, socket.id, x, y, character);
 
         // inform the other players of the new player that joined
         socket.broadcast.emit(Defaults.SERVER_GAME_SPAWN_NEW_PLAYER, players[socket.id]);
@@ -138,6 +165,9 @@ io.on(Defaults.GAME_SERVER_CONNECTION, (socket) => {
                 socket.broadcast.emit(Defaults.SERVER_GAME_ROOM_ENTERRED, roomId);
                 io.emit(Defaults.SERVER_GAME_CLOSE_DOOR);
                 io.emit(Defaults.SERVER_GAME_CHANGE_PLAYER_POSITION, playerPosition);
+
+                if (process.env.name)
+                    Room.remove({ name: process.env.name });
             } else {
                 socket.send(Defaults.SERVER_GAME_ROOM_ENTERRED, roomId);
                 socket.send(Defaults.SERVER_GAME_CLOSE_DOOR);
@@ -169,9 +199,9 @@ setInterval(function () {
                 id, x, y
             });
         });
-        enemies[enemyId].shoot(players, (id: string, x: number, y: number, angle: number) => {
+        enemies[enemyId].shoot(players, (id: string, x: number, y: number, angle: number, damage: number) => {
             io.emit(Defaults.SERVER_GAME_ENEMY_SHOOT, {
-                id, x, y, angle
+                id, x, y, angle, damage
             });
         });
     }

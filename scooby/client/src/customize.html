@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCOOBY</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        body {
+            background-color: #f2f2f2;
+            font-family: "Calligraffitti", cursive;
+        }
+
+        .customize-content {
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .customize-character-list {
+            display: grid;
+            grid-template-columns: repeat(4, 270px);
+        }
+
+        .customize-character-list-item {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-direction: column;
+            margin: 20px;
+            border: 3px solid black;
+        }
+
+        .character-image {
+            border-bottom: 3px solid black;
+            width: 220px;
+            padding: 20px;
+        }
+
+        .character-name {
+            font-size: 22px;
+            padding-bottom: 5px;
+        }
+
+        .character-xp,
+        .character-health {
+            padding-bottom: 5px;
+            font-size: 18px;
+        }
+
+        .character-use-button {
+            font-size: 18px;
+            padding: 4px;
+            width: 120px;
+            margin-bottom: 8px;
+            border: 2px solid black;
+            text-transform: uppercase;
+            font-family: "Calligraffitti", cursive;
+        }
+
+        #xp-content {
+            width: 100%;
+            text-align: right;
+            padding: 20px;
+            padding-right: 100px;
+            font-size: 24px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="header">
+        <div class="linklist">
+            <div class="title">SCOOBY</div>
+            <ul class="nav-links">
+                <li class="listitem hover-underline-animation"><a href="index.html">Home</a></li>
+                <li class="listitem hover-underline-animation"><a href="customize.html">Customize</a></li>
+                <li class="listitem hover-underline-animation"><a href="join_room.html">Join Room</a></li>
+                <li class="listitem hover-underline-animation"><a href="create_room.html">Create Room</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="customize-content">
+        <div id="xp-content">XP: </div>
+        <div class="customize-character-list">
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', async function () {
+            let cred = window.localStorage.getItem('credential');
+            if (cred == null) {
+                window.location.href = './index.html';
+            }
+            let res = await fetch("http://localhost:80/character", {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ cred })
+            });
+            res = await res.json();
+            let selectedCharacter = window.localStorage.getItem('selectedCharacter');
+            if (!selectedCharacter) {
+                selectedCharacter = "Knight";
+                window.localStorage.setItem('selectedCharacter', selectedCharacter);
+            }
+            res.character.forEach(character => {
+                let div = document.createElement("div");
+                div.className = "customize-character-list-item";
+                div.add
+                div.innerHTML = `
+                    <img src="${character.path}" alt="character" class="character-image" />
+                    <div class="character-name">${character.name}</div>
+                    <div class="character-xp">XP: 💰${character.xp}</div>
+                    <div class="character-health">Health: 💊${character.health}</div>
+                `;
+                let button = document.createElement("button");
+                button.className = "character-use-button";
+                if (character.buyed) {
+                    if (selectedCharacter == character.name) {
+                        button.innerHTML = "Selected";
+                    } else {
+                        button.addEventListener("click", () => use(character.name));
+                        button.innerHTML = "Use";
+                    }
+                } else {
+                    button.addEventListener("click", () => buy(character.id));
+                    button.innerHTML = "Buy";
+                }
+                div.appendChild(button);
+                document.querySelector(".customize-character-list").appendChild(div);
+            });
+
+            res = await fetch("http://localhost:80/userData", {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ cred })
+            });
+            res = await res.json();
+            document.getElementById("xp-content").innerHTML = `XP: ${res.user.xp}`;
+        });
+
+        function use(id) {
+            window.localStorage.setItem('selectedCharacter', id);
+            window.location.reload();
+        }
+
+        async function buy(id) {
+            let cred = window.localStorage.getItem('credential');
+            let res = await fetch("http://localhost:80/characterBuy", {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ cred, id })
+            });
+            res = await res.json();
+            window.location.reload();
+        }
+    </script>
+
+</body>
+
+</html>

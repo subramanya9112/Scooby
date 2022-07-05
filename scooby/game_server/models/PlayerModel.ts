@@ -33,7 +33,11 @@ class PlayerModel {
     }
 
     async saveToDatabase() {
-        await User.updateOne({ email: this.email }, { xp: this.xp });
+        let user = await User.findOne({ email: this.email });
+        if (user) {
+            user.xp += this.xp;
+            user.save();
+        }
     }
 }
 export default PlayerModel;

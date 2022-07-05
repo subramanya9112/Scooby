@@ -11,8 +11,19 @@ class EnemyModel {
     room: RoomModel;
     shootTime: number;
     shootInterval: number;
+    damage: number;
 
-    constructor(id: string, x: number, y: number, health: number, xp: number, character: string, room: RoomModel) {
+    constructor(
+        id: string,
+        x: number,
+        y: number,
+        health: number,
+        xp: number,
+        character: string,
+        room: RoomModel,
+        shootInterval: number,
+        damage: number,
+    ) {
         this.id = id;
         this.x = x;
         this.y = y;
@@ -21,7 +32,8 @@ class EnemyModel {
         this.xp = xp;
         this.character = character;
         this.shootTime = 0;
-        this.shootInterval = 10;
+        this.shootInterval = shootInterval;
+        this.damage = damage;
     }
 
     move(players: { [id: string]: PlayerModel; }, onMove: (id: string, x: number, y: number) => void) {
@@ -51,13 +63,13 @@ class EnemyModel {
         }
     }
 
-    shoot(players: { [id: string]: PlayerModel; }, onShoot: (id: string, x: number, y: number, angle: number) => void) {
+    shoot(players: { [id: string]: PlayerModel; }, onShoot: (id: string, x: number, y: number, angle: number, damage: number) => void) {
         if (this.room.active) {
             if (this.shootTime != 0) {
                 this.shootTime = Math.max(this.shootTime - 1, 0);
                 return;
             }
-            this.shootTime = this.shootInterval;
+            this.shootTime = this.shootInterval * (1 + (Math.random() - 1) / 10);
             let playerIdToMove = null;
             let minimumDistance = 5 * 64;
 
@@ -72,7 +84,7 @@ class EnemyModel {
             }
             if (playerIdToMove) {
                 let angle = Math.atan2(players[playerIdToMove].y - this.y, players[playerIdToMove].x - this.x);
-                onShoot(this.id, this.x, this.y, angle);
+                onShoot(this.id, this.x, this.y, angle, this.damage);
             }
         }
     }

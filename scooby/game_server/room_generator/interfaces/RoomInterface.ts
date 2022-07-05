@@ -11,4 +11,5 @@ export default interface LevelInterface {
     doors: DoorInterface[];
     roomCollider: RoomColliderInterface[];
     enemies: EnemyInterface[];
+    roomType: string;
 };

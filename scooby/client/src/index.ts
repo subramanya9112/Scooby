@@ -10,7 +10,7 @@ const config: Phaser.Types.Core.GameConfig = {
     physics: {
         default: 'arcade',
         arcade: {
-            debug: true,
+            debug: false,
             fps: 300,
             timeScale: 1,
             gravity: {
@@ -33,7 +33,10 @@ class Game extends Phaser.Game {
     globals: any;
     constructor() {
         super(config);
-        Listeners.setInstance('http://localhost:80/', this);
+        // @ts-ignore
+        let params = (new URL(document.location)).searchParams;
+        let token = params.get("id");
+        Listeners.setInstance(`http://localhost:80/`, this);
         this.scene.start(BootScene.sceneName);
         this.events.on(GameConst.CHANGE_SCENE, (sceneName: string) => {
             this.scene.start(sceneName);

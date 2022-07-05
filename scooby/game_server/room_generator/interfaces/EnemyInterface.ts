@@ -1,6 +1,6 @@
-export default interface DoorInterface {
-    id: string,
+export default interface EnemyInterface {
+    id: string;
     x: number;
     y: number;
-    type: string;
+    name: string;
 };

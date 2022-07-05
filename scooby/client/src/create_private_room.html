@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCOOBY</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        body {
+            background-color: #f2f2f2;
+            font-family: "Calligraffitti", cursive;
+        }
+
+        .create-private-room-content {
+            height: 80%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .form {
+            width: 50%;
+            position: relative;
+            height: 60px;
+            overflow: hidden;
+            flex-grow: 1;
+            max-height: 76px;
+        }
+
+        input {
+            font-size: 16px;
+            padding-top: 50px;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            color: black;
+            border: none;
+            outline: none;
+        }
+
+        input:focus,
+        input:valid {
+            color: #000000;
+        }
+
+        label {
+            position: absolute;
+            bottom: 0px;
+            left: 0%;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            border-bottom: 1px solid black;
+            color: black;
+        }
+
+        label::after {
+            content: "";
+            position: absolute;
+            left: 0px;
+            bottom: -1px;
+            height: 100%;
+            width: 100%;
+            border-bottom: 3px solid #000000;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+
+        .content-name {
+            position: absolute;
+            bottom: 0px;
+            left: 0px;
+            transition: all 0.3s ease;
+        }
+
+
+        .form input:focus+.label-name .content-name,
+        .form input:valid+.label-name .content-name {
+            transform: translateY(-150%);
+            font-size: 14px;
+            color: #000000;
+        }
+
+        .form input:focus+.label-name::after,
+        .form input:valid+.label-name::after {
+            transform: translateX(0%);
+        }
+
+        .create-private-room-submit-button {
+            margin: 50px;
+            width: 250px;
+            height: 40px;
+            border: 3px solid black;
+            border-radius: 10px;
+            font-size: 22px;
+            font-family: "Calligraffitti", cursive;
+            box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="header">
+        <div class="linklist">
+            <div class="title">SCOOBY</div>
+            <ul class="nav-links">
+                <li class="listitem hover-underline-animation"><a href="index.html">Home</a></li>
+                <li class="listitem hover-underline-animation"><a href="customize.html">Customize</a></li>
+                <li class="listitem hover-underline-animation"><a href="join_room.html">Join Room</a></li>
+                <li class="listitem hover-underline-animation"><a href="create_room.html">Create Room</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="create-private-room-content">
+        <div class="form">
+            <input title="name" required autoComplete="off" spellCheck=false id="inputId" />
+            <label for="name" class="label-name">
+                <span class="content-name">Id</span>
+            </label>
+        </div>
+        <div class="form">
+            <input type="password" title="password" required autoComplete="off" spellCheck=false id="inputPassword" />
+            <label for="password" class="label-name">
+                <span class="content-name">Password</span>
+            </label>
+        </div>
+        <button class="create-private-room-submit-button">SUBMIT</button>
+    </div>
+
+    <script>
+        window.addEventListener('load', async function () {
+            let cred = window.localStorage.getItem('credential');
+            if (cred == null) {
+                window.location.href = './index.html';
+            }
+            document.getElementsByClassName("create-private-room-submit-button")[0].addEventListener("click", async () => {
+                let name = document.getElementById("inputId").value;
+                let password = document.getElementById("inputPassword").value;
+                let res = await fetch("http://localhost:80/createRoom", {
+                    method: "POST",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ cred, name, password }),
+                });
+                res = await res.json();
+                if (res.success == true) {
+                    window.location.href = `./game.html?id=${name}&password=${password}`;
+                } else {
+                    window.location.reload();
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

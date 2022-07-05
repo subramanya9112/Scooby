@@ -1,8 +1,8 @@
 import io, { Socket } from 'socket.io-client';
 import GameConst from '../constants/game';
 import GameScene from '../scenes/GameScene';
-import * as Defaults1 from '../../../shared/SERVER_GAME_CONSTANT';
-import * as Defaults2 from '../../../shared/SOCKET_GAME_CONSTANT';
+import * as Defaults1 from '../shared/SERVER_GAME_CONSTANT';
+import * as Defaults2 from '../shared/SOCKET_GAME_CONSTANT';
 
 class Listeners {
     private static instance: Listeners = new Listeners();
@@ -77,7 +77,7 @@ class Listeners {
 
         this.socket?.on(Defaults1.SERVER_GAME_PLAYER_DIED, () => {
             console.log("Level completed");
-            window.location.href = "https://localhost:8080/page.html";
+            window.location.href = "./index.html";
         });
 
         this.socket?.on(Defaults1.SERVER_GAME_PLAYER_HEALTH, (data: any) => {
@@ -90,7 +90,7 @@ class Listeners {
 
         this.socket?.on(Defaults1.SERVER_GAME_END_LEVEL, () => {
             console.log("Level completed");
-            window.location.href = "https://localhost:8080/page.html";
+            window.location.href = "./index.html";
             // this.game?.events.emit(GameConst.CHANGE_SCENE, GameScene.sceneName);
         });
 

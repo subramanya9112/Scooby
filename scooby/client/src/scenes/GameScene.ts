@@ -4,7 +4,8 @@ import Bullet from '../classes/Bullet';
 import Listeners from '../listners/listener';
 import Enemy from '../classes/Enemy';
 import Collider from '../classes/Colliders';
-import * as Defaults from './../../../shared/SOCKET_GAME_CONSTANT';
+import * as Defaults from './../shared/SOCKET_GAME_CONSTANT';
+import UIScene from './UIScene';
 
 export default class GameScene extends Phaser.Scene {
     public static sceneName = 'GameScene';
@@ -30,15 +31,24 @@ export default class GameScene extends Phaser.Scene {
     }
 
     init() {
+        this.scene.launch(UIScene.sceneName);
+
         this.listenEvents();
+
+        this.sound.pauseOnBlur = false;
+        let backgroundMusic = this.game.sound.add(Math.random() < 0.5 ? 'audio1' : 'audio2');
+        // @ts-ignore
+        backgroundMusic.setLoop(true);
+        backgroundMusic.play();
     }
 
     createMapData(data: any) {
         for (let i = 0; i < data.length; i++) {
             let room = data[i];
 
+            let type = room['roomType'];
             room['tiles'].forEach((val: { x: number; y: number; height: number, width: number }) => {
-                this.add.sprite(val.x, val.y, 'tile')
+                this.add.sprite(val.x, val.y, `${type}-tile`)
                     .setInteractive()
                     .setOrigin(0, 0)
                     .setScale(val.height, val.width)
@@ -46,11 +56,11 @@ export default class GameScene extends Phaser.Scene {
             });
 
             room['doors'].forEach((val: { x: number; y: number; }) => {
-                this.add.sprite(val.x, val.y, 'door').setInteractive().setOrigin(0, 0).setDepth(-1);
+                this.add.sprite(val.x, val.y, `${type}-tile`).setInteractive().setOrigin(0, 0).setDepth(-1);
             });
 
             room['doors'].forEach((val: { x: number; y: number; }) => {
-                this.doors?.create(val.x, val.y - 32, 'wall', 0)
+                this.doors?.create(val.x, val.y - 32, `${type}-wall`, 0)
                     .setOrigin(0, 0)
                     .setScale(2)
                     .setSize(32, 32)
@@ -61,7 +71,7 @@ export default class GameScene extends Phaser.Scene {
             });
 
             room['walls'].forEach((val: { x: number | undefined; y: number; }) => {
-                this.walls?.create(val.x, val.y - 32, 'wall', 0)
+                this.walls?.create(val.x, val.y - 32, `${type}-wall`, 0)
                     .setScale(2)
                     .setOrigin(0, 0)
                     .setSize(64, 64)
@@ -81,13 +91,13 @@ export default class GameScene extends Phaser.Scene {
                 this.roomCollider?.add(collider);
             });
 
-            room['enemies'].forEach((val: { id: string, x: number; y: number; }) => {
+            room['enemies'].forEach((val: { id: string, x: number; y: number; name: string; }) => {
                 let enemy = new Enemy(
                     val.id,
                     this,
                     val.x,
                     val.y,
-                    'player',
+                    val.name,
                     undefined,
                 );
                 this.enemies?.add(enemy);
@@ -105,7 +115,7 @@ export default class GameScene extends Phaser.Scene {
                     let newPlayer = new Player(this,
                         players[key].x,
                         players[key].y,
-                        'player',
+                        players[key].character,
                         undefined,
                         players[key].id,
                         false
@@ -120,7 +130,7 @@ export default class GameScene extends Phaser.Scene {
             let newPlayer = new Player(this,
                 player.x,
                 player.y,
-                'player',
+                player.character,
                 undefined,
                 player.id,
                 false
@@ -152,15 +162,13 @@ export default class GameScene extends Phaser.Scene {
             if (this.otherPlayerBullets) {
                 let bullet = this.otherPlayerBullets.getFirstDead();
                 if (bullet) {
-                    // TODO:
                     bullet.activate(
                         data.x,
                         data.y,
-                        10,
+                        1,
                     );
                     bullet.id = data.id;
                 } else {
-                    // TODO:
                     bullet = new Bullet(
                         data.id,
                         this,
@@ -168,7 +176,7 @@ export default class GameScene extends Phaser.Scene {
                         data.y,
                         'shot',
                         undefined,
-                        10,
+                        1,
                     );
                 }
                 this.otherPlayerBullets.add(bullet);
@@ -224,15 +232,13 @@ export default class GameScene extends Phaser.Scene {
             if (this.enemyBullets) {
                 let bullet = this.enemyBullets.getFirstDead();
                 if (bullet) {
-                    // TODO
                     bullet.activate(
                         data.x,
                         data.y,
-                        10,
+                        data.damage,
                     );
                     bullet.id = data.id;
                 } else {
-                    // TODO
                     bullet = new Bullet(
                         data.id,
                         this,
@@ -240,7 +246,7 @@ export default class GameScene extends Phaser.Scene {
                         data.y,
                         'shot',
                         undefined,
-                        10,
+                        data.damage,
                     );
                 }
                 this.enemyBullets.add(bullet);
@@ -253,12 +259,14 @@ export default class GameScene extends Phaser.Scene {
         });
 
         this.game.events?.on(Defaults.SOCKET_GAME_PLAYER_HEALTH, (data: any) => {
-            console.log(data.health);
             this.playerHealth = data.health;
+            this.events.emit("onHealthChange", this.playerHealth);
         });
 
         this.game.events?.on(Defaults.SOCKET_GAME_PLAYER_XP, (data: any) => {
             this.playerXP = data.xp;
+            console.log(this.playerXP)
+            this.events.emit("onXPChange", this.playerXP);
         });
 
         this.game.events?.on(Defaults.SOCKET_GAME_ENEMY_REMOVE, (data: any) => {
@@ -272,9 +280,29 @@ export default class GameScene extends Phaser.Scene {
     }
 
     create() {
-        this.player = new Player(this, (4 * 40 + 20) * 64, (4 * 40 + 20) * 64, 'player', undefined, "", true);
+        let cred = window.localStorage.getItem('credential');
+        if (!cred) {
+            window.location.href = './index.html';
+        }
+        let character = window.localStorage.getItem('selectedCharacter');
+        if (!character) {
+            character = "Knight";
+            window.localStorage.setItem('selectedCharacter', character);
+        }
+        let randomX = Math.floor(Math.random() * 10) - 5;
+        let randomY = Math.floor(Math.random() * 10) - 5;
+        this.player = new Player(this, (4 * 40 + 20 + randomX) * 64, (4 * 40 + 20 + randomY) * 64, character, undefined, "", true);
+        // @ts-ignore
+        let params = (new URL(document.location)).searchParams;
+        let password = params.get("password");
         // emit event to server that a new player has joined
-        this.game.events.emit(Defaults.GAME_SOCKET_NEW_PLAYER, { x: this.player.x, y: this.player.y });
+        this.game.events.emit(Defaults.GAME_SOCKET_NEW_PLAYER, {
+            x: this.player.x,
+            y: this.player.y,
+            character,
+            cred,
+            password,
+        });
 
         // create walls group
         this.walls = this.physics.add.staticGroup();
@@ -357,14 +385,12 @@ export default class GameScene extends Phaser.Scene {
 
             let bullet = this.playerBullets.getFirstDead();
             if (bullet) {
-                // TODO
                 bullet.activate(
                     this.player.x,
                     this.player.y,
-                    10,
+                    1,
                 );
             } else {
-                // TODO
                 bullet = new Bullet(
                     Listeners.getInstance().getBulletUniqueID(),
                     this,
@@ -372,7 +398,7 @@ export default class GameScene extends Phaser.Scene {
                     this.player.y,
                     'shot',
                     undefined,
-                    10,
+                    1,
                 );
             }
             this.playerBullets.add(bullet);

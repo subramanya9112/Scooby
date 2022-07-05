@@ -7,17 +7,6 @@ services:
     build:
       context: .
       dockerfile: game_server/Dockerfile
-    networks:
-      - frontend
-  docker_manager:
-    image: docker_manager
-    build:
-      context: .
-      dockerfile: docker_manager/Dockerfile
-    networks:
-      - backend
-    depends_on:
-      - game_server_build
   mongodb:
     image: mongo
     ports:
@@ -26,8 +15,6 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
       MONGO_INITDB_DATABASE: scooby
-    networks:
-      - backend
     volumes:
       - mongodb:/data/db
   nginx:
@@ -50,12 +37,5 @@ services:
     depends_on:
       - nginx
       - mongodb
-      - docker_manager
-    networks:
-      - backend
-      - frontend
-networks:
-  frontend: null
-  backend: null
 volumes:
   mongodb: null

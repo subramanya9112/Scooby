@@ -22,6 +22,7 @@
     "url": "https://github.com/subramanya9112/scooby/issues"
   },
   "homepage": "https://github.com/subramanya9112/scooby#readme",
-  "devDependencies": {},
-  "dependencies": {}
+  "devDependencies": {
+    "typescript": "^4.7.4"
+  }
 }

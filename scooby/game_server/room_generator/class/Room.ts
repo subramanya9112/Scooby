@@ -9,6 +9,7 @@ import EnemyInterface from '../interfaces/EnemyInterface';
 import RoomInterface from '../interfaces/RoomInterface';
 import RoomModel from '../../models/RoomModel';
 import EnemyModel from '../../models/EnemyModel';
+import GameData from '../../GameData';
 
 class Room {
     private roomType: RoomType;
@@ -319,15 +320,17 @@ class Room {
                 id: uuid(),
                 x,
                 y,
-                type: "",
+                name: "",
             });
         }
 
         return enemies;
     }
 
-    getData(tileSize: number, roomSize: number, row: number, col: number) {
+    getData(tileSize: number, roomSize: number, row: number, col: number, roomType: string) {
         let id = uuid();
+        // @ts-ignore
+        let enemiesData = GameData.gameData['enemies'][roomType];
         let roomInt: RoomInterface = {
             id,
             tiles: this.getTiles(tileSize, roomSize, row, col),
@@ -335,6 +338,7 @@ class Room {
             doors: this.getDoors(tileSize, roomSize, row, col),
             roomCollider: this.getRoomType() === RoomType.START ? [] : [this.getRoomCollider(tileSize, roomSize, row, col)],
             enemies: this.getEnemies(tileSize, roomSize, row, col),
+            roomType,
         };
 
         let dimension = this.getRoomDimension();
@@ -344,18 +348,23 @@ class Room {
             (roomSize * row + (roomSize - dimension.width) / 2) * tileSize,
             dimension.height,
             dimension.width,
+            roomType,
         );
 
         let enemy: { [id: string]: EnemyModel; } = {};
         roomInt.enemies.forEach(e => {
+            let enemyType = enemiesData[Math.floor(Math.random() * enemiesData.length)]
+            e.name = enemyType['name'];
             enemy[e.id] = new EnemyModel(
                 e.id,
                 e.x,
                 e.y,
-                100, // TODO: based on enemy type
-                100, // TODO: based on enemy type
-                "100", // TODO: based on character type
-                room
+                enemyType['health'],
+                enemyType['xp'],
+                enemyType['name'],
+                room,
+                enemyType['shootInterval'],
+                enemyType['damage'],
             );
             room.addEnemies(enemy[e.id]);
         });

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCOOBY</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        body {
+            background-color: #f2f2f2;
+        }
+
+        .join-room-content {
+            height: 80%;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .join-room-content button {
+            width: 300px;
+            height: 60px;
+            border: 3px solid black;
+            border-radius: 10px;
+            font-size: 26px;
+            font-family: "Calligraffitti", cursive;
+            box-shadow: 4px 4px 4px 1px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="header">
+        <div class="linklist">
+            <div class="title"><a href="index.html">SCOOBY</a></div>
+            <ul class="nav-links">
+                <li class="listitem hover-underline-animation"><a href="index.html">Home</a></li>
+                <li class="listitem hover-underline-animation"><a href="customize.html">Customize</a></li>
+                <li class="listitem hover-underline-animation"><a href="join_room.html">Join Room</a></li>
+                <li class="listitem hover-underline-animation"><a href="create_room.html">Create Room</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="join-room-content">
+        <button class="public-room-button" onclick="window.location.href='join_public_room.html'">Public Room</button>
+        <button class="private-room-button" onclick="window.location.href='join_private_room.html'">Private
+            Room</button>
+    </div>
+</body>
+
+</html>
