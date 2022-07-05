@@ -136,7 +136,7 @@
             }
             document.getElementsByClassName("create-public-room-submit-button")[0].addEventListener("click", async () => {
                 let name = document.getElementById("inputId").value;
-                let res = await fetch("./server/createRoom", {
+                let res = await fetch("./../server/createRoom", {
                     method: "POST",
                     headers: {
                         'Accept': 'application/json',
