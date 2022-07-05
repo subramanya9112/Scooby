@@ -40,7 +40,7 @@ class Game extends Phaser.Game {
             window.location.href = "./index.html";
             return;
         }
-        Listeners.setInstance(`http://scooby-game.ddns.net/`, this, id);
+        Listeners.setInstance(this, id);
         this.scene.start(BootScene.sceneName);
         this.events.on(GameConst.CHANGE_SCENE, (sceneName: string) => {
             this.scene.start(sceneName);
