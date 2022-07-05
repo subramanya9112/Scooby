@@ -3,14 +3,20 @@ version: "3.9"
 services:
   game_server_build:
     image: game_server
-    command: [ "echo", "built image" ]
     build:
       context: .
       dockerfile: game_server/Dockerfile
+    env_file:
+      - game_server/.env
+  client:
+    image: client
+    build:
+      context: .
+      dockerfile: client/Dockerfile
   mongodb:
     image: mongo
     ports:
-      - "27017:27017"
+      - "27016:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
@@ -21,12 +27,8 @@ services:
     image: nginx
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx/access.log:/etc/nginx/access.log
-      - ./nginx/error.log:/etc/nginx/error.log
     ports:
       - "80:80"
-    networks:
-      - frontend
   server:
     image: server
     build:
@@ -34,6 +36,8 @@ services:
       dockerfile: server/Dockerfile
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    env_file:
+      - server/.env
     depends_on:
       - nginx
       - mongodb

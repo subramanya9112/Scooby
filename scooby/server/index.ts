@@ -71,16 +71,22 @@ app.use(async (req, res, next) => {
 });
 
 function createRoom(roomID: string, user: any, privateRoom: boolean, password: string) {
-    let env = [`name=${roomID}`]
+    let env = [
+        `name=${roomID}`,
+        `CLIENT_ID=${process.env.CLIENT_ID}`,
+        `CLIENT_SECRET=${process.env.CLIENT_SECRET}`,
+        `MONGO_URL=${process.env.MONGO_URL}`,
+    ]
     if (password)
-        env = [`name=${roomID}`, `password=${password}`]
+        env.push(`password=${password}`)
     docker.createContainer({
-        Image: 'ubuntu',
+        Image: 'game_server',
         name: roomID,
         HostConfig: {
-            // AutoRemove: true,
+            NetworkMode: "frontend",
+            AutoRemove: true,
         },
-        Env: [`name=${roomID}`]
+        Env: env,
     }).then(container => {
         container.start(async (err, data) => {
             if (err) {

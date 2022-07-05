@@ -36,7 +36,11 @@ class Game extends Phaser.Game {
         // @ts-ignore
         let params = (new URL(document.location)).searchParams;
         let id = params.get("id");
-        Listeners.setInstance(`http://${id}.localtest.me/`, this);
+        if (id == null) {
+            window.location.href = "./index.html";
+            return;
+        }
+        Listeners.setInstance(`http://scooby-game.ddns.net/`, this, id);
         this.scene.start(BootScene.sceneName);
         this.events.on(GameConst.CHANGE_SCENE, (sceneName: string) => {
             this.scene.start(sceneName);

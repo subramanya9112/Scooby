@@ -139,9 +139,13 @@ class Listeners {
         return this.instance;
     }
 
-    public static setInstance(url: string, game: Phaser.Game) {
+    public static setInstance(url: string, game: Phaser.Game, path: string) {
         this.instance.removeListeners();
-        this.instance.socket = io(url, { transports: ['websocket', 'polling', 'flashsocket'] });
+        this.instance.socket = io(url, {
+            transports: ['polling'],
+            upgrade: false,
+            path: `/${path}/socket.io`,
+        });
         this.instance.game = game;
         this.instance.setUpListeners();
     }

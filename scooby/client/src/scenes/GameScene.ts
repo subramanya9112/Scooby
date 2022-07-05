@@ -346,7 +346,12 @@ export default class GameScene extends Phaser.Scene {
         this.physics.add.collider(this.enemies, this.otherPlayers);
         this.physics.add.collider(this.enemies, this.player);
         this.physics.add.collider(this.enemies, this.playerBullets, this.enemyPlayerBulletCollision.bind(this));
-        this.physics.add.collider(this.enemies, this.otherPlayerBullets);
+        this.physics.add.collider(this.enemies, this.otherPlayerBullets, (object1: Phaser.GameObjects.GameObject, object2: Phaser.GameObjects.GameObject) => {
+            (object2 as Bullet).deactivate();
+        });
+        this.physics.add.collider(this.otherPlayers, this.enemyBullets, (object1: Phaser.GameObjects.GameObject, object2: Phaser.GameObjects.GameObject) => {
+            (object2 as Bullet).deactivate();
+        });
 
         this.doorCollider.active = false;
         this.physics.add.collider(this.walls, this.playerBullets, this.wallPlayerBulletCollision.bind(this));

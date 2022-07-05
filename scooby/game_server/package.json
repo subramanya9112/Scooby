@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --clear index.ts",
-    "build": "tsc -p tsconfig.json --outDir .",
+    "build": "tsc",
     "start": "node index.js"
   },
   "author": "",

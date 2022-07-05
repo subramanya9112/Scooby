@@ -14,7 +14,9 @@ import Room from './database/room';
 require("dotenv").config();
 
 const server = createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+    transports: ['polling'],
+});
 const oAuth2Client = new OAuth2Client({
     clientId: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
@@ -63,8 +65,11 @@ io.on(Defaults.GAME_SERVER_CONNECTION, (socket) => {
 
         // if no user is present, stop the machine
         if (Object.keys(players).length === 0) {
-            console.log('No user is present');
-            process.exit(0);
+            setTimeout(async () => {
+                await Room.remove({ name: process.env.name });
+                console.log('No user is present');
+                process.exit(0);
+            }, 120000)
         }
 
         // emit a message to all players to remove this player
@@ -157,7 +162,7 @@ io.on(Defaults.GAME_SERVER_CONNECTION, (socket) => {
         socket.emit(Defaults.SERVER_GAME_TAKE_MAP, levels);
     });
 
-    socket.on(Defaults.GAME_SERVER_ROOM_ENTERRED, (data) => {
+    socket.on(Defaults.GAME_SERVER_ROOM_ENTERRED, async (data) => {
         let roomId = data.roomId, playerPosition = data.playerPosition;
         if (rooms[roomId]) {
             if (rooms[roomId].active === false) {
@@ -167,7 +172,7 @@ io.on(Defaults.GAME_SERVER_CONNECTION, (socket) => {
                 io.emit(Defaults.SERVER_GAME_CHANGE_PLAYER_POSITION, playerPosition);
 
                 if (process.env.name)
-                    Room.remove({ name: process.env.name });
+                    await Room.remove({ name: process.env.name });
             } else {
                 socket.send(Defaults.SERVER_GAME_ROOM_ENTERRED, roomId);
                 socket.send(Defaults.SERVER_GAME_CLOSE_DOOR);
