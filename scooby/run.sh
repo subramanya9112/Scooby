@@ -13,4 +13,8 @@ docker run -d --network=frontend \
         -v //var/run/docker.sock:/var/run/docker.sock \
         --env-file ./server/.env \
         server
-docker run -d --network=frontend -p 80:80 -v /${PWD}/nginx/nginx.conf:/etc/nginx/nginx.conf nginx
+docker run -d --network=frontend -p 443:443 \
+          -v /${PWD}/nginx/nginx.conf:/etc/nginx/nginx.conf \
+        -v /${PWD}/nginx/cert.key:/etc/nginx/cert.key \
+        -v /${PWD}/nginx/cert.crt:/etc/nginx/cert.crt \
+        nginx
