@@ -1,0 +1,131 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\babel@aux[2]{}
+\@nameuse{bbl@beforestart}
+\providecommand\HyperFirstAtBeginDocument{\AtBeginDocument}
+\HyperFirstAtBeginDocument{\ifx\hyper@anchor\@undefined
+\global\let\oldcontentsline\contentsline
+\gdef\contentsline#1#2#3#4{\oldcontentsline{#1}{#2}{#3}}
+\global\let\oldnewlabel\newlabel
+\gdef\newlabel#1#2{\newlabelxx{#1}#2}
+\gdef\newlabelxx#1#2#3#4#5#6{\oldnewlabel{#1}{{#2}{#3}}}
+\AtEndDocument{\ifx\hyper@anchor\@undefined
+\let\contentsline\oldcontentsline
+\let\newlabel\oldnewlabel
+\fi}
+\fi}
+\global\let\hyper@last\relax 
+\gdef\HyperFirstAtBeginDocument#1{#1}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\babel@aux{english}{}
+\providecommand {\FN@pp@footnotehinttrue }{}
+\providecommand {\FN@pp@footnote@aux }[2]{}
+\FN@pp@footnotehinttrue 
+\@writefile{toc}{\contentsline {chapter}{Abstract}{3}{chapter*.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {An online multiplayer game allows users from across the world to connect and play together. Most modern multiplayer games use the client-server architecture. However, in these types of online games, there are issues of latency and performance. To solve these issues, we are building an online scalable low latency multiplayer game using Docker containers. Docker containers can be deployed on a cloud nearest to the client reducing latency and they also enable easy management of game servers. }}{3}{section*.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {The game would be implemented in the form of a web application. The basic architecture consists of the game is a client-server model. Any number of clients can join the server and each client has their own game instance in the server, grouped under rooms. A cluster of docker containers are used to run the server. We make use of the phaser game framework to render the game, maintain the game state and we use MongoDB for the database. The Docker containers will be hosted on a cloud. }}{3}{section*.4}\protected@file@percent }
+\FN@pp@footnotehinttrue 
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {The game will be able to provide cross-platform support. The game would be a fast-paced combat game and will be able to establish real time communication between the user’s browser and a server. The game will also be able to allow users to create private and public rooms for game sessions and the game server will run on docker containers. }}{3}{section*.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {1}Introduction}{4}{chapter.1}\protected@file@percent }
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {A multiplayer game is a game in which more than one person can play in the same game environment at the same time, either locally and on the same computing system, locally and on different computing systems via a local area network, or via a wide area network, most commonly the Internet.}}{4}{section*.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {The game will be having the following features:}}{4}{section*.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {There are two types of multiplayer games:}}{4}{section*.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {The game would be an online multiplayer game where players are not restricted to the same network. There are two ways of implementing this:}}{5}{section*.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {Most modern multiplayer games use the client-server architecture. However, in these types of online games, there are issues of latency and performance. The primary causes of latency are and other performance issues are:}}{5}{section*.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {The solution to the above problems is to use docker containers. Docker is an open platform for developing, shipping, and running applications. Docker enables us to separate our applications from our infrastructure so we can deliver software quickly. Docker provides the ability to package and run an application in a loosely isolated environment called a container. The isolation and security allow us to run many containers simultaneously on a given host. Containers are lightweight and contain everything needed to run an application, so we do not have to rely on what is currently installed on the host. }}{6}{section*.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {Docker provides tooling and a platform to manage the lifecycle of containers: }}{6}{section*.12}\protected@file@percent }
+\FN@pp@footnotehinttrue 
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {In the case of online multiplayer game, docker enables easy management of game servers and allows for deployment on the cloud. This allows an instance of the game to run on the nearest cloud server to the user solving the issues of latency. As there are multiple docker containers running the server, the performance is boosted. Further, using docker containers enables support for rolling deployment, autoscaling, monitoring and maintenance of the game server.}}{6}{section*.13}\protected@file@percent }
+\citation{paper1}
+\citation{paper1}
+\citation{paper2}
+\citation{paper2}
+\citation{paper2}
+\citation{paper3}
+\citation{paper3}
+\citation{paper3}
+\@writefile{toc}{\contentsline {chapter}{\numberline {2}Literature Survey}{7}{chapter.2}\protected@file@percent }
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {Many works and papers were referred and the following things were noted.}}{7}{section*.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {Cloud gaming is the future for the gaming industry and it allows users to play games anywhere, anytime and from any device. The paper \cite  {paper1} addresses the main challenges in the cloud gaming namely, resource allocation and ensuring quality of user experience. \cite  {paper1} also elaborates on how to improve the performance of cloud gaming by initializing the cloud gaming package inside Docker containers which will allow the application to be more reliable by secularizing its resource allocation and increasing the overall performance of the cloud gaming system and makes it more reliable while utilizing less resources.}}{7}{section*.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {The real-time strategy game StartCraft: Brood War is a commonly used domain for AI research, with a pre-installed collection of AI development tools supporting all the major types of StarCraft bots. \cite  {paper2} presents a dockerized version of StarCraft. The implementation in \cite  {paper2} provides a convenient way to deploy StarCraft AIs on numerous hosts at once and across multiple platforms despite limited OS support of StarCraft. \cite  {paper2} also describes the design of the Docker images and presents a few use cases.}}{7}{section*.16}\protected@file@percent }
+\citation{paper4}
+\citation{paper4}
+\citation{paper4}
+\citation{paper5}
+\citation{paper5}
+\citation{paper6}
+\citation{paper6}
+\citation{paper6}
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {Mobile Edge Computing (MEC) is an emerging network paradigm that provides cloud and IT services at the point of access of the network. Such proximity to the end user translates into ultra-low latency and high bandwidth, while, at the same time, it alleviates traffic congestion in the network core. Due to the need to run servers on edge nodes, key element of MEC architectures is to ensure server portability and low overhead. \cite  {paper3} proposes a tool that can be used for this purpose - Docker. Docker is a framework that allows easy, fast deployment of Linux containers. \cite  {paper3} focusses on the suitability of Docker in MEC scenarios by quantifying the CPU consumed by Docker when running two different containerized services: multiplayer gaming and video streaming. The results of tests performed by the authors in \cite  {paper3}, with varying numbers of clients and servers, yield different results for the two case studies: for the gaming service, the overhead logged by Docker increases only with the number of servers; conversely, for the video streaming case, the overhead is not affected by the number of either clients or servers.}}{8}{section*.17}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {The recent developments in the field of cloud computing allow cloud gaming to provide high-end quality of experience to the users. \cite  {paper4} claims that the fundamental requirement of gaming is to provide maximum quality of gamer experience, however cloud gaming suffers in terms of providing Quality of Experience, because the network transmission of game scenes from cloud game server to gamer device is distant. The author endeavours to minimize latency and increase performance in cloud gaming through this paper. \cite  {paper4} proposes moving the cloud game server to the fog nodes present at the edge network of the player based on Node selection algorithm. \cite  {paper4} also suggests that, to increase the performance of cloud gaming, traditional virtual machine should be replaced by light-weight containers.}}{8}{section*.18}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {HTML5 has provided many developers the opportunity to experiment with the new possibilities for web development. The authors’ aim, through \cite  {paper5} is to give an overview of what this means to the game development community. \cite  {paper5} evaluates new HTML5 elements and JavaScript features. It also highlights WebGL, Canvas and WebSockets that have given developers the opportunity to flaunt their creativity by manipulating images, creating 3D environments and providing real-time interaction.}}{8}{section*.19}\protected@file@percent }
+\FN@pp@footnotehinttrue 
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {Big Two is an online multiplayer game with imperfect information. In this game, each player plays without knowing the opponent's confidential information. \cite  {paper6} considers Big Two as an example in elaborating the need for web-based multiplayer games with imperfect information to have real-time communication for handling rapid information changes and the condition of the game state at any time. \cite  {paper6} proposes a new framework for web-based multiplayer games with imperfect information. \cite  {paper6} utilizes an open-source WebSocket, namely Socket.IO, and implements this framework in Big Two as a case study.}}{9}{section*.20}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {3}Problem Statement and Objectives}{10}{chapter.3}\protected@file@percent }
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\FN@pp@footnotehinttrue 
+\@writefile{toc}{\contentsline {chapter}{\numberline {4}Project Design}{11}{chapter.4}\protected@file@percent }
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\@writefile{lof}{\contentsline {figure}{\numberline {4.1}{\ignorespaces An overview of the basic game architecture}}{11}{figure.4.1}\protected@file@percent }
+\newlabel{fig:archi}{{4.1}{11}{An overview of the basic game architecture}{figure.4.1}{}}
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {The Fig. \ref  {fig:archi} shows the architecture of the game. The top part of the architecture diagram depicts the server. Any number of clients can join the server and each client has their own game instance in the server, grouped under rooms. A cluster of docker containers are used to run the server. We also make use of phaser game framework and MongoDB for the database. We make use of Google Cloud VM instance for the hosting of our game.}}{12}{figure.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {The following are the major components of the architecture: }}{12}{section*.22}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4.2}{\ignorespaces Swimlane diagram depicting the basic use cases of the application}}{13}{figure.4.2}\protected@file@percent }
+\newlabel{fig:swim}{{4.2}{13}{Swimlane diagram depicting the basic use cases of the application}{figure.4.2}{}}
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {The Fig. \ref  {fig:swim} shows the flow of the actions required for some basic use cases of the application. These are briefly described as follows: }}{13}{section*.23}\protected@file@percent }
+\FN@pp@footnotehinttrue 
+\@writefile{toc}{\contentsline {chapter}{\numberline {5}Software and Hardware Requirements}{15}{chapter.5}\protected@file@percent }
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {\textbf  {Software Requirements \newline  }Server Side:}}{15}{section*.24}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {Client Side:}}{15}{section*.25}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {Development: }}{16}{section*.26}\protected@file@percent }
+\FN@pp@footnotehinttrue 
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {\textbf  {Hardware Requirements \newline  }As the game is implemented in the form of a web app, any hardware configuration which can run a web browser can effectively run our game. However, a good network connectivity is required. }}{16}{section*.27}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {6}Project Plan and Cost Estimation}{17}{chapter.6}\protected@file@percent }
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\@writefile{lof}{\contentsline {figure}{\numberline {6.1}{\ignorespaces An overview of the project plan}}{17}{figure.6.1}\protected@file@percent }
+\newlabel{fig:plan}{{6.1}{17}{An overview of the project plan}{figure.6.1}{}}
+\@writefile{toc}{\contentsline {paragraph}{\LARGE  {Project planning}}{17}{section*.28}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {The Fig. \ref  {fig:plan} shows an overview of the plan for implementing the project. We have divided the implementation of the entire project into five phases spanning across six months. The tasks planned in these months are breifly described as follows: }}{17}{section*.29}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\LARGE  {Cost Estimation}}{19}{section*.30}\protected@file@percent }
+\FN@pp@footnotehinttrue 
+\@writefile{toc}{\contentsline {chapter}{\numberline {7}Modules Implemented and Results}{20}{chapter.7}\protected@file@percent }
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {The following images (Fig. \ref  {fig:direc}) shows the directory structure of the module implemented: \newline  }}{20}{section*.31}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {7.1}{\ignorespaces The directory structure of the project}}{21}{figure.7.1}\protected@file@percent }
+\newlabel{fig:direc}{{7.1}{21}{The directory structure of the project}{figure.7.1}{}}
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {The following parts constitute the implemented module: \newline  \textbf  {Client Side}}}{21}{section*.32}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Server Side}{23}{section*.33}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\LARGE  {Results:\newline  \newline  }}{23}{section*.34}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{Conclusion}{25}{section*.34}\protected@file@percent }
+\FN@pp@footnotehinttrue 
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {The online multiplayer games constitute a significant portion on the gaming industry. With an active userbase of more than two billion players, the industry is worth around thirty thousand crores. Consequently, it is very important for the games to be highly scalable for meeting the evergrowing demands. To enhance user experience, it is crucial for the games to have low latency and feel more responsive.}}{25}{section*.36}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {We use docker containers for the game server which allows us to, easily manage, monitor and maintain the game server, allows for deployment on the cloud, reduces latency by running an instance of the game on the cloud server nearest to the user, boost server performance by using multiple docker containers to run the server, it also enables support for rolling deployment and autoscaling.}}{25}{section*.37}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\normalfont  {We propose to build an online multiplayer game that allow users from across the world to connect and play together. The game would be a 2D multiplayer game that supports features like orthogonal Top-down view, co-op combat, Character customization and public and private rooms for game sessions.}}{25}{section*.38}\protected@file@percent }
+\bibcite{paper1}{{1}{}{{}}{{}}}
+\bibcite{paper2}{{2}{}{{}}{{}}}
+\bibcite{paper3}{{3}{}{{}}{{}}}
+\bibcite{paper4}{{4}{}{{}}{{}}}
+\bibcite{paper5}{{5}{}{{}}{{}}}
+\bibcite{paper6}{{6}{}{{}}{{}}}
+\bibcite{link1}{{7}{}{{}}{{}}}
+\bibcite{link2}{{8}{}{{}}{{}}}
+\bibcite{link3}{{9}{}{{}}{{}}}
+\bibcite{link4}{{10}{}{{}}{{}}}
+\@writefile{toc}{\contentsline {chapter}{Bibliography}{26}{section*.39}\protected@file@percent }
+\FN@pp@footnotehinttrue 
+\bibcite{link5}{{11}{}{{}}{{}}}
+\@writefile{toc}{\contentsline {chapter}{Phase I Presentation Slides}{28}{chapter*.40}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{Phase II Presentation Slides}{32}{section*.41}\protected@file@percent }
+\providecommand\NAT@force@numbers{}\NAT@force@numbers
+\gdef \@abspage@last{34}

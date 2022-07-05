@@ -1,0 +1,20 @@
+\begin{thebibliography}{1}
+
+\bibitem{Moody-Darken:RBF}
+J~E Moody and C~Darken.
+\newblock Fast learning in networks of locally tuned processing units.
+\newblock {\em Neural Computation}, 1:281--294, 1989.
+
+\bibitem{Mostafa:VC}
+Y~S~Abu Mostafa.
+\newblock The vapnik-chervonenkis dimension: Information verses complexity in
+  learning.
+\newblock {\em Neural Computation}, 1:312--317, 1989.
+
+\bibitem{Rumelhart-Hinton-Williams:MLP}
+D~E Rumelhart, G~E Hinton, and R~J Williams.
+\newblock Learning internal representation by error propagation.
+\newblock {\em Parallel distributed processing: Explorations in the
+  microstructures of cognition}, 1, 1986.
+
+\end{thebibliography}
