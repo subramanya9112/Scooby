@@ -1,0 +1,92 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%This template was prepared by Prabodh C P
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[oneside,12pt]{Classes/VTU}
+%\title{Project Title}
+%\author{by \\ \vspace{1mm}
+%\begin{tabular}{ccc}
+%\textbf{Student-1 }&  & \textbf{1SI12CS001}\\
+%\textbf{Student-2 }&  & \textbf{1SI12CS002}\\
+%\textbf{Student-3 }&  & \textbf{1SI12CS003}\\
+%\textbf{Student-4 }&  & \textbf{1SI12CS004}\\
+%\end{tabular}
+%\vspace{7mm} \\under the guidance of\\\textbf{Prof. John Doe}
+%\\Assistant Professor \vspace{0.5cm}}
+%for Associate Professor - Associate Professor
+%for Professor - Professor
+
+%\collegeordept{Department of Computer Science and Engineering}
+%\university{Siddaganga Institute of Technology, Tumakuru}
+
+%\renewcommand{\submittedtext}{A project report submitted to \\Visvesvaraya Technological University. Belgaum, Karnataka \\\textit{in the partial fulfillment of the requirements for the award of degree of} }
+%\degree{\textbf{\textit{Bachelor of Engineering}} \\ in \\ \textbf{\textit{Computer Science and Engineering}}}
+%\degreedate{\textbf{May, 2016}}
+%Do not edit below contents
+\hbadness=10000
+\hfuzz=50pt
+
+\usepackage{StyleFiles/watermark}
+\usepackage{multirow}
+\usepackage{epsfig}
+\usepackage{enumerate}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amscd}
+\usepackage{amssymb}
+\usepackage{rotating}
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{setspace}
+\usepackage[T1]{fontenc}
+\usepackage{alltt}
+\usepackage{array}
+\usepackage{pdfpages}
+
+\begin{document}
+
+\renewcommand\baselinestretch{1.2}
+\baselineskip=18pt plus1pt
+
+%\maketitle
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+\includepdf[pages=-]{FrontPage.pdf}
+
+\begin{romanpages}
+%\include{Certificate/certificate}
+\include{Declaration/declaration}
+\addcontentsline{toc}{chapter}{Acknowledgements}
+\include{Acknowledgement/acknowledgement}
+%\include{Dedication/dedication}
+\cleardoublepage
+\addcontentsline{toc}{chapter}{Abstract}
+\include{Abstract/abstract}
+\normalsize{\tableofcontents}
+\cleardoublepage
+\addcontentsline{toc}{chapter}{List of Figures}
+\normalsize{\listoffigures}
+\cleardoublepage
+\addcontentsline{toc}{chapter}{List of Tables}
+\normalsize{\listoftables}
+\end{romanpages}
+                                          
+\include{Introduction/introduction}
+\include{HighLevelDesign/highLevelDesign}
+\include{DetailedDesign/detailedDesign}
+\include{Implementation/implementation}
+\include{Testing/testing}
+\include{ConclusionsFutureScope/conclusionsFutureScope}
+\appendix
+\include{Appendix1/appendix1}
+\include{Appendix2/appendix2}
+
+\bibliographystyle{plain}
+\cleardoublepage
+\addcontentsline{toc}{chapter}{Bibliography}
+\bibliography{References/references}
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%This template was prepared by Prabodh C P
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
