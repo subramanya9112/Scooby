@@ -1,5 +1,5 @@
-docker pull subramanyag/client
 docker network create frontend
+docker run -d --network=frontend --name=visualizer subramanyag/visualizer
 docker run -d --network=frontend --name=client subramanyag/client
 docker run -d --network=frontend \
         --name=mongodb \

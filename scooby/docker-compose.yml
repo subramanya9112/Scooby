@@ -8,6 +8,11 @@ services:
       dockerfile: game_server/Dockerfile
     env_file:
       - game_server/.env
+  visualizer:
+    image: visualizer
+    build:
+      context: .
+      dockerfile: visualizer/Dockerfile
   client:
     image: client
     build:

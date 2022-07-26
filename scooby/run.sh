@@ -1,4 +1,5 @@
 docker network create frontend
+docker run -d --network=frontend --name=visualizer visualizer
 docker run -d --network=frontend --name=client client
 docker run -d --network=frontend \
         --name=mongodb \
