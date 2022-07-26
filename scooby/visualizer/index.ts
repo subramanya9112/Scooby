@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 const app = express();
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 80;
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import Docker from 'dockerode';

@@ -1,9 +1,12 @@
 docker network create frontend
-docker run -d --network=frontend --name=visualizer subramanyag/visualizer
+docker run -d --network=frontend \
+        --name=visualizer \
+        -v //var/run/docker.sock:/var/run/docker.sock \
+        subramanyag/visualizer
 docker run -d --network=frontend --name=client subramanyag/client
 docker run -d --network=frontend \
         --name=mongodb \
-        -p 27016:27017 \
+        -p 27017:27017 \
         -v mongodb:/data/db \
         -e MONGO_INITDB_ROOT_USERNAME=root \
         -e MONGO_INITDB_ROOT_PASSWORD=password \

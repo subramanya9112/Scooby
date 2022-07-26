@@ -1,5 +1,8 @@
 docker network create frontend
-docker run -d --network=frontend --name=visualizer visualizer
+docker run -d --network=frontend \
+        --name=visualizer \
+        -v //var/run/docker.sock:/var/run/docker.sock \
+        visualizer
 docker run -d --network=frontend --name=client client
 docker run -d --network=frontend \
         --name=mongodb \
@@ -15,7 +18,7 @@ docker run -d --network=frontend \
         --env-file ./server/.env \
         server
 docker run -d --network=frontend -p 443:443 \
-          -v /${PWD}/nginx/nginx.conf:/etc/nginx/nginx.conf \
+        -v /${PWD}/nginx/nginx.conf:/etc/nginx/nginx.conf \
         -v /${PWD}/nginx/cert.key:/etc/nginx/cert.key \
         -v /${PWD}/nginx/cert.crt:/etc/nginx/cert.crt \
         nginx
